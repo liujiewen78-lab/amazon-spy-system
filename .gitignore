@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Logs
+*.log
+scrape_*.log
+
+# Data snapshots (大文件，不入库)
+data/snapshots/*.json
+
+# Playwright cache
+.playwright/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+secrets.json

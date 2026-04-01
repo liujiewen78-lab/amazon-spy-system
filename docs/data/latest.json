@@ -1,0 +1,1024 @@
+{
+  "report_id": "2026-04-01T03:29:37Z",
+  "generated_at": "2026-04-01T03:29:37Z",
+  "prev_report_id": null,
+  "total_analyzed": 10,
+  "total_passed_filters": 10,
+  "top10": [
+    {
+      "asin": "B07518RBH2",
+      "title": "ZELUS Weighted Vest, 6lb/8lb/12lb/16lb/20lb/25lb/30lb Weight Vest with Reflective Stripe for Workout, Strength Training, Running, Fitness, Muscle Building, Weight Loss, Weightlifting",
+      "brand": "Unknown",
+      "price": 28.98,
+      "rating": 4.5,
+      "review_count": 0,
+      "bsr": null,
+      "bsr_category": null,
+      "keyword": "zelus weighted vest weight",
+      "source_page": "bsr_sports_&_outdoors",
+      "tier": "red_ocean_beatable",
+      "total_score": 64,
+      "score_breakdown": {
+        "demand_strength": {
+          "score": 3,
+          "max": 20,
+          "bsr": 99999,
+          "review_count": 0
+        },
+        "competition_beatable": {
+          "score": 20,
+          "max": 20,
+          "gates_passed": "3/3"
+        },
+        "profit_margin": {
+          "score": 20,
+          "max": 20,
+          "estimated_net_profit_usd": 12.95,
+          "gross_margin_pct": 70.0,
+          "selling_price": 28.98
+        },
+        "supply_chain_complexity": {
+          "score": 5,
+          "max": 10,
+          "detail": "+0 simple, -0 complex signals"
+        },
+        "compliance_risk": {
+          "score": 10,
+          "max": 10,
+          "risk_signals_found": 0
+        },
+        "review_pain_improvable": {
+          "score": 1,
+          "max": 10,
+          "pain_count": 0,
+          "improvable": false
+        },
+        "content_viral_potential": {
+          "score": 5,
+          "max": 10,
+          "viral_signals": 0
+        }
+      },
+      "gates": {
+        "market_concentration": {
+          "passed": true,
+          "top_brand_share": 0.0,
+          "detail": "No competitor data"
+        },
+        "entry_barrier": {
+          "passed": true,
+          "new_listings_count": 0,
+          "detail": "No competitor data"
+        },
+        "keyword_opportunity": {
+          "passed": true,
+          "opportunity_keywords": [],
+          "detail": "No data"
+        },
+        "review_pain_points": {
+          "passed": false,
+          "improvable": false,
+          "top_pain_point": null,
+          "pain_point_count": 0,
+          "detail": "No reviews available",
+          "warning": true
+        }
+      },
+      "opportunity_summary": "可切入红海｜$29售价，综合评分64分。",
+      "top3_evidence": [
+        "BSR排名: #N/A"
+      ],
+      "top3_risks": [
+        "竞争一般，需靠差异化打法切入"
+      ],
+      "entry_strategy": "差异化改款切入",
+      "review_insights": {
+        "pain_points": [],
+        "praises": [],
+        "improvable": false,
+        "summary": "No reviews available"
+      },
+      "rank": 1,
+      "delta": {
+        "score_change": 0,
+        "rank_change": 0,
+        "review_count_change": 0,
+        "is_new": true
+      }
+    },
+    {
+      "asin": "B0FFTL7QNC",
+      "title": "Owala FreeSip Sway Insulated Stainless Steel Water Bottle with Two-Way Spout, Built-In Straw and Bucket Handle, Made for Travel, School, and Sports, 30oz, BPA Free, Leak Proof, Daybreak",
+      "brand": "Unknown",
+      "price": 27.99,
+      "rating": 4.7,
+      "review_count": 0,
+      "bsr": null,
+      "bsr_category": null,
+      "keyword": "owala freesip sway insulated",
+      "source_page": "bsr_sports_&_outdoors",
+      "tier": "red_ocean_beatable",
+      "total_score": 64,
+      "score_breakdown": {
+        "demand_strength": {
+          "score": 3,
+          "max": 20,
+          "bsr": 99999,
+          "review_count": 0
+        },
+        "competition_beatable": {
+          "score": 20,
+          "max": 20,
+          "gates_passed": "3/3"
+        },
+        "profit_margin": {
+          "score": 20,
+          "max": 20,
+          "estimated_net_profit_usd": 12.37,
+          "gross_margin_pct": 70.0,
+          "selling_price": 27.99
+        },
+        "supply_chain_complexity": {
+          "score": 5,
+          "max": 10,
+          "detail": "+0 simple, -0 complex signals"
+        },
+        "compliance_risk": {
+          "score": 10,
+          "max": 10,
+          "risk_signals_found": 0
+        },
+        "review_pain_improvable": {
+          "score": 1,
+          "max": 10,
+          "pain_count": 0,
+          "improvable": false
+        },
+        "content_viral_potential": {
+          "score": 5,
+          "max": 10,
+          "viral_signals": 0
+        }
+      },
+      "gates": {
+        "market_concentration": {
+          "passed": true,
+          "top_brand_share": 0.0,
+          "detail": "No competitor data"
+        },
+        "entry_barrier": {
+          "passed": true,
+          "new_listings_count": 0,
+          "detail": "No competitor data"
+        },
+        "keyword_opportunity": {
+          "passed": true,
+          "opportunity_keywords": [],
+          "detail": "No data"
+        },
+        "review_pain_points": {
+          "passed": false,
+          "improvable": false,
+          "top_pain_point": null,
+          "pain_point_count": 0,
+          "detail": "No reviews available",
+          "warning": true
+        }
+      },
+      "opportunity_summary": "可切入红海｜$28售价，综合评分64分。",
+      "top3_evidence": [
+        "BSR排名: #N/A"
+      ],
+      "top3_risks": [
+        "竞争一般，需靠差异化打法切入"
+      ],
+      "entry_strategy": "差异化改款切入",
+      "review_insights": {
+        "pain_points": [],
+        "praises": [],
+        "improvable": false,
+        "summary": "No reviews available"
+      },
+      "rank": 2,
+      "delta": {
+        "score_change": 0,
+        "rank_change": 0,
+        "review_count_change": 0,
+        "is_new": true
+      }
+    },
+    {
+      "asin": "B0DR9QJRHZ",
+      "title": "STANLEY IceFlow 2.0 Flip Straw Tumbler with Handle 30 oz | Twist On Lid and Flip Up Straw | Leak Resistant Water Bottle | Insulated Stainless Steel | BPA-Free | Meadow",
+      "brand": "Unknown",
+      "price": 21.0,
+      "rating": 4.7,
+      "review_count": 0,
+      "bsr": null,
+      "bsr_category": null,
+      "keyword": "stanley iceflow flip straw",
+      "source_page": "bsr_sports_&_outdoors",
+      "tier": "red_ocean_beatable",
+      "total_score": 64,
+      "score_breakdown": {
+        "demand_strength": {
+          "score": 3,
+          "max": 20,
+          "bsr": 99999,
+          "review_count": 0
+        },
+        "competition_beatable": {
+          "score": 20,
+          "max": 20,
+          "gates_passed": "3/3"
+        },
+        "profit_margin": {
+          "score": 20,
+          "max": 20,
+          "estimated_net_profit_usd": 8.32,
+          "gross_margin_pct": 70.0,
+          "selling_price": 21.0
+        },
+        "supply_chain_complexity": {
+          "score": 5,
+          "max": 10,
+          "detail": "+0 simple, -0 complex signals"
+        },
+        "compliance_risk": {
+          "score": 10,
+          "max": 10,
+          "risk_signals_found": 0
+        },
+        "review_pain_improvable": {
+          "score": 1,
+          "max": 10,
+          "pain_count": 0,
+          "improvable": false
+        },
+        "content_viral_potential": {
+          "score": 5,
+          "max": 10,
+          "viral_signals": 0
+        }
+      },
+      "gates": {
+        "market_concentration": {
+          "passed": true,
+          "top_brand_share": 0.0,
+          "detail": "No competitor data"
+        },
+        "entry_barrier": {
+          "passed": true,
+          "new_listings_count": 0,
+          "detail": "No competitor data"
+        },
+        "keyword_opportunity": {
+          "passed": true,
+          "opportunity_keywords": [],
+          "detail": "No data"
+        },
+        "review_pain_points": {
+          "passed": false,
+          "improvable": false,
+          "top_pain_point": null,
+          "pain_point_count": 0,
+          "detail": "No reviews available",
+          "warning": true
+        }
+      },
+      "opportunity_summary": "可切入红海｜$21售价，综合评分64分。",
+      "top3_evidence": [
+        "BSR排名: #N/A"
+      ],
+      "top3_risks": [
+        "竞争一般，需靠差异化打法切入"
+      ],
+      "entry_strategy": "差异化改款切入",
+      "review_insights": {
+        "pain_points": [],
+        "praises": [],
+        "improvable": false,
+        "summary": "No reviews available"
+      },
+      "rank": 3,
+      "delta": {
+        "score_change": 0,
+        "rank_change": 0,
+        "review_count_change": 0,
+        "is_new": true
+      }
+    },
+    {
+      "asin": "B0CMP9M725",
+      "title": "TOSY Flying Ring - 36 RGB Multicolor or 12 Monocolor LEDs, Super Bright, Lost Mode, Auto Light Up, Easter Basket Stuffers Gift for Kid/Teen/Boy/Girl, Safe, Waterproof, Pool/Beach/Camping Toy",
+      "brand": "Unknown",
+      "price": 15.99,
+      "rating": 4.3,
+      "review_count": 0,
+      "bsr": null,
+      "bsr_category": null,
+      "keyword": "tosy flying ring rgb",
+      "source_page": "bsr_sports_&_outdoors",
+      "tier": "red_ocean_beatable",
+      "total_score": 62,
+      "score_breakdown": {
+        "demand_strength": {
+          "score": 3,
+          "max": 20,
+          "bsr": 99999,
+          "review_count": 0
+        },
+        "competition_beatable": {
+          "score": 20,
+          "max": 20,
+          "gates_passed": "3/3"
+        },
+        "profit_margin": {
+          "score": 16,
+          "max": 20,
+          "estimated_net_profit_usd": 5.41,
+          "gross_margin_pct": 70.0,
+          "selling_price": 15.99
+        },
+        "supply_chain_complexity": {
+          "score": 5,
+          "max": 10,
+          "detail": "+0 simple, -0 complex signals"
+        },
+        "compliance_risk": {
+          "score": 10,
+          "max": 10,
+          "risk_signals_found": 0
+        },
+        "review_pain_improvable": {
+          "score": 1,
+          "max": 10,
+          "pain_count": 0,
+          "improvable": false
+        },
+        "content_viral_potential": {
+          "score": 7,
+          "max": 10,
+          "viral_signals": 1
+        }
+      },
+      "gates": {
+        "market_concentration": {
+          "passed": true,
+          "top_brand_share": 0.0,
+          "detail": "No competitor data"
+        },
+        "entry_barrier": {
+          "passed": true,
+          "new_listings_count": 0,
+          "detail": "No competitor data"
+        },
+        "keyword_opportunity": {
+          "passed": true,
+          "opportunity_keywords": [],
+          "detail": "No data"
+        },
+        "review_pain_points": {
+          "passed": false,
+          "improvable": false,
+          "top_pain_point": null,
+          "pain_point_count": 0,
+          "detail": "No reviews available",
+          "warning": true
+        }
+      },
+      "opportunity_summary": "可切入红海｜$16售价，综合评分62分。",
+      "top3_evidence": [
+        "BSR排名: #N/A"
+      ],
+      "top3_risks": [
+        "竞争一般，需靠差异化打法切入"
+      ],
+      "entry_strategy": "差异化改款切入",
+      "review_insights": {
+        "pain_points": [],
+        "praises": [],
+        "improvable": false,
+        "summary": "No reviews available"
+      },
+      "rank": 4,
+      "delta": {
+        "score_change": 0,
+        "rank_change": 0,
+        "review_count_change": 0,
+        "is_new": true
+      }
+    },
+    {
+      "asin": "B0CRC73JTS",
+      "title": "Owala Kids FreeSip Insulated Stainless Steel Water Bottle with Straw for Sports, Travel, and School, BPA-Free Sports Water Bottle, 16 oz, Celestial Sphere",
+      "brand": "Unknown",
+      "price": 19.99,
+      "rating": 4.7,
+      "review_count": 0,
+      "bsr": null,
+      "bsr_category": null,
+      "keyword": "owala kids freesip insulated",
+      "source_page": "bsr_sports_&_outdoors",
+      "tier": "red_ocean_beatable",
+      "total_score": 60,
+      "score_breakdown": {
+        "demand_strength": {
+          "score": 3,
+          "max": 20,
+          "bsr": 99999,
+          "review_count": 0
+        },
+        "competition_beatable": {
+          "score": 20,
+          "max": 20,
+          "gates_passed": "3/3"
+        },
+        "profit_margin": {
+          "score": 16,
+          "max": 20,
+          "estimated_net_profit_usd": 7.73,
+          "gross_margin_pct": 70.0,
+          "selling_price": 19.99
+        },
+        "supply_chain_complexity": {
+          "score": 5,
+          "max": 10,
+          "detail": "+0 simple, -0 complex signals"
+        },
+        "compliance_risk": {
+          "score": 10,
+          "max": 10,
+          "risk_signals_found": 0
+        },
+        "review_pain_improvable": {
+          "score": 1,
+          "max": 10,
+          "pain_count": 0,
+          "improvable": false
+        },
+        "content_viral_potential": {
+          "score": 5,
+          "max": 10,
+          "viral_signals": 0
+        }
+      },
+      "gates": {
+        "market_concentration": {
+          "passed": true,
+          "top_brand_share": 0.0,
+          "detail": "No competitor data"
+        },
+        "entry_barrier": {
+          "passed": true,
+          "new_listings_count": 0,
+          "detail": "No competitor data"
+        },
+        "keyword_opportunity": {
+          "passed": true,
+          "opportunity_keywords": [],
+          "detail": "No data"
+        },
+        "review_pain_points": {
+          "passed": false,
+          "improvable": false,
+          "top_pain_point": null,
+          "pain_point_count": 0,
+          "detail": "No reviews available",
+          "warning": true
+        }
+      },
+      "opportunity_summary": "可切入红海｜$20售价，综合评分60分。",
+      "top3_evidence": [
+        "BSR排名: #N/A"
+      ],
+      "top3_risks": [
+        "竞争一般，需靠差异化打法切入"
+      ],
+      "entry_strategy": "差异化改款切入",
+      "review_insights": {
+        "pain_points": [],
+        "praises": [],
+        "improvable": false,
+        "summary": "No reviews available"
+      },
+      "rank": 5,
+      "delta": {
+        "score_change": 0,
+        "rank_change": 0,
+        "review_count_change": 0,
+        "is_new": true
+      }
+    },
+    {
+      "asin": "B08HN2V7GY",
+      "title": "Fun Boomerang for Kids - Easter Basket Stuffers - Soft & Easy to Use - Best Gifts for 6 7 8 9 10 Year Old Boys & Girls + 2026 Top Toys for Boys Age 8-12 - Fun Outdoor Toy for Boys Girls Gift Ideas",
+      "brand": "Unknown",
+      "price": 13.57,
+      "rating": 4.2,
+      "review_count": 0,
+      "bsr": null,
+      "bsr_category": null,
+      "keyword": "fun boomerang kids easter",
+      "source_page": "bsr_sports_&_outdoors",
+      "tier": "red_ocean_beatable",
+      "total_score": 55,
+      "score_breakdown": {
+        "demand_strength": {
+          "score": 3,
+          "max": 20,
+          "bsr": 99999,
+          "review_count": 0
+        },
+        "competition_beatable": {
+          "score": 20,
+          "max": 20,
+          "gates_passed": "3/3"
+        },
+        "profit_margin": {
+          "score": 10,
+          "max": 20,
+          "estimated_net_profit_usd": 4.01,
+          "gross_margin_pct": 70.0,
+          "selling_price": 13.57
+        },
+        "supply_chain_complexity": {
+          "score": 5,
+          "max": 10,
+          "detail": "+0 simple, -0 complex signals"
+        },
+        "compliance_risk": {
+          "score": 10,
+          "max": 10,
+          "risk_signals_found": 0
+        },
+        "review_pain_improvable": {
+          "score": 1,
+          "max": 10,
+          "pain_count": 0,
+          "improvable": false
+        },
+        "content_viral_potential": {
+          "score": 6,
+          "max": 10,
+          "viral_signals": 1
+        }
+      },
+      "gates": {
+        "market_concentration": {
+          "passed": true,
+          "top_brand_share": 0.0,
+          "detail": "No competitor data"
+        },
+        "entry_barrier": {
+          "passed": true,
+          "new_listings_count": 0,
+          "detail": "No competitor data"
+        },
+        "keyword_opportunity": {
+          "passed": true,
+          "opportunity_keywords": [],
+          "detail": "No data"
+        },
+        "review_pain_points": {
+          "passed": false,
+          "improvable": false,
+          "top_pain_point": null,
+          "pain_point_count": 0,
+          "detail": "No reviews available",
+          "warning": true
+        }
+      },
+      "opportunity_summary": "可切入红海｜$14售价，综合评分55分。",
+      "top3_evidence": [
+        "BSR排名: #N/A"
+      ],
+      "top3_risks": [
+        "竞争一般，需靠差异化打法切入"
+      ],
+      "entry_strategy": "差异化改款切入",
+      "review_insights": {
+        "pain_points": [],
+        "praises": [],
+        "improvable": false,
+        "summary": "No reviews available"
+      },
+      "rank": 6,
+      "delta": {
+        "score_change": 0,
+        "rank_change": 0,
+        "review_count_change": 0,
+        "is_new": true
+      }
+    },
+    {
+      "asin": "B08XQ35T47",
+      "title": "Seago Swim Goggles 2 Pack Anti-Fog Anti-UV Wide View Swimming Goggles for Kids 3-14",
+      "brand": "Unknown",
+      "price": 14.99,
+      "rating": 4.4,
+      "review_count": 0,
+      "bsr": null,
+      "bsr_category": null,
+      "keyword": "seago swim goggles anti",
+      "source_page": "bsr_sports_&_outdoors",
+      "tier": "red_ocean_beatable",
+      "total_score": 53,
+      "score_breakdown": {
+        "demand_strength": {
+          "score": 3,
+          "max": 20,
+          "bsr": 99999,
+          "review_count": 0
+        },
+        "competition_beatable": {
+          "score": 20,
+          "max": 20,
+          "gates_passed": "3/3"
+        },
+        "profit_margin": {
+          "score": 10,
+          "max": 20,
+          "estimated_net_profit_usd": 4.83,
+          "gross_margin_pct": 70.0,
+          "selling_price": 14.99
+        },
+        "supply_chain_complexity": {
+          "score": 5,
+          "max": 10,
+          "detail": "+0 simple, -0 complex signals"
+        },
+        "compliance_risk": {
+          "score": 10,
+          "max": 10,
+          "risk_signals_found": 0
+        },
+        "review_pain_improvable": {
+          "score": 1,
+          "max": 10,
+          "pain_count": 0,
+          "improvable": false
+        },
+        "content_viral_potential": {
+          "score": 4,
+          "max": 10,
+          "viral_signals": 0
+        }
+      },
+      "gates": {
+        "market_concentration": {
+          "passed": true,
+          "top_brand_share": 0.0,
+          "detail": "No competitor data"
+        },
+        "entry_barrier": {
+          "passed": true,
+          "new_listings_count": 0,
+          "detail": "No competitor data"
+        },
+        "keyword_opportunity": {
+          "passed": true,
+          "opportunity_keywords": [],
+          "detail": "No data"
+        },
+        "review_pain_points": {
+          "passed": false,
+          "improvable": false,
+          "top_pain_point": null,
+          "pain_point_count": 0,
+          "detail": "No reviews available",
+          "warning": true
+        }
+      },
+      "opportunity_summary": "可切入红海｜$15售价，综合评分53分。",
+      "top3_evidence": [
+        "BSR排名: #N/A"
+      ],
+      "top3_risks": [
+        "竞争一般，需靠差异化打法切入"
+      ],
+      "entry_strategy": "差异化改款切入",
+      "review_insights": {
+        "pain_points": [],
+        "praises": [],
+        "improvable": false,
+        "summary": "No reviews available"
+      },
+      "rank": 7,
+      "delta": {
+        "score_change": 0,
+        "rank_change": 0,
+        "review_count_change": 0,
+        "is_new": true
+      }
+    },
+    {
+      "asin": "B094DV7SSS",
+      "title": "CAP Barbell Neoprene Dumbbell Weights Pairs & Sets | Multiple Colors",
+      "brand": "Unknown",
+      "price": 11.99,
+      "rating": 4.8,
+      "review_count": 0,
+      "bsr": null,
+      "bsr_category": null,
+      "keyword": "cap barbell neoprene dumbbell",
+      "source_page": "bsr_sports_&_outdoors",
+      "tier": "red_ocean_beatable",
+      "total_score": 53,
+      "score_breakdown": {
+        "demand_strength": {
+          "score": 3,
+          "max": 20,
+          "bsr": 99999,
+          "review_count": 0
+        },
+        "competition_beatable": {
+          "score": 20,
+          "max": 20,
+          "gates_passed": "3/3"
+        },
+        "profit_margin": {
+          "score": 10,
+          "max": 20,
+          "estimated_net_profit_usd": 3.09,
+          "gross_margin_pct": 70.0,
+          "selling_price": 11.99
+        },
+        "supply_chain_complexity": {
+          "score": 5,
+          "max": 10,
+          "detail": "+0 simple, -0 complex signals"
+        },
+        "compliance_risk": {
+          "score": 10,
+          "max": 10,
+          "risk_signals_found": 0
+        },
+        "review_pain_improvable": {
+          "score": 1,
+          "max": 10,
+          "pain_count": 0,
+          "improvable": false
+        },
+        "content_viral_potential": {
+          "score": 4,
+          "max": 10,
+          "viral_signals": 0
+        }
+      },
+      "gates": {
+        "market_concentration": {
+          "passed": true,
+          "top_brand_share": 0.0,
+          "detail": "No competitor data"
+        },
+        "entry_barrier": {
+          "passed": true,
+          "new_listings_count": 0,
+          "detail": "No competitor data"
+        },
+        "keyword_opportunity": {
+          "passed": true,
+          "opportunity_keywords": [],
+          "detail": "No data"
+        },
+        "review_pain_points": {
+          "passed": false,
+          "improvable": false,
+          "top_pain_point": null,
+          "pain_point_count": 0,
+          "detail": "No reviews available",
+          "warning": true
+        }
+      },
+      "opportunity_summary": "可切入红海｜$12售价，综合评分53分。",
+      "top3_evidence": [
+        "BSR排名: #N/A"
+      ],
+      "top3_risks": [
+        "竞争一般，需靠差异化打法切入"
+      ],
+      "entry_strategy": "差异化改款切入",
+      "review_insights": {
+        "pain_points": [],
+        "praises": [],
+        "improvable": false,
+        "summary": "No reviews available"
+      },
+      "rank": 8,
+      "delta": {
+        "score_change": 0,
+        "rank_change": 0,
+        "review_count_change": 0,
+        "is_new": true
+      }
+    },
+    {
+      "asin": "B081ZW9KY8",
+      "title": "Speedo Kids' Swim Goggles Sunny G Ages 3-8",
+      "brand": "Unknown",
+      "price": 10.99,
+      "rating": 4.5,
+      "review_count": 0,
+      "bsr": null,
+      "bsr_category": null,
+      "keyword": "speedo kids swim goggles",
+      "source_page": "bsr_sports_&_outdoors",
+      "tier": "red_ocean_beatable",
+      "total_score": 48,
+      "score_breakdown": {
+        "demand_strength": {
+          "score": 3,
+          "max": 20,
+          "bsr": 99999,
+          "review_count": 0
+        },
+        "competition_beatable": {
+          "score": 20,
+          "max": 20,
+          "gates_passed": "3/3"
+        },
+        "profit_margin": {
+          "score": 5,
+          "max": 20,
+          "estimated_net_profit_usd": 2.51,
+          "gross_margin_pct": 70.0,
+          "selling_price": 10.99
+        },
+        "supply_chain_complexity": {
+          "score": 5,
+          "max": 10,
+          "detail": "+0 simple, -0 complex signals"
+        },
+        "compliance_risk": {
+          "score": 10,
+          "max": 10,
+          "risk_signals_found": 0
+        },
+        "review_pain_improvable": {
+          "score": 1,
+          "max": 10,
+          "pain_count": 0,
+          "improvable": false
+        },
+        "content_viral_potential": {
+          "score": 4,
+          "max": 10,
+          "viral_signals": 0
+        }
+      },
+      "gates": {
+        "market_concentration": {
+          "passed": true,
+          "top_brand_share": 0.0,
+          "detail": "No competitor data"
+        },
+        "entry_barrier": {
+          "passed": true,
+          "new_listings_count": 0,
+          "detail": "No competitor data"
+        },
+        "keyword_opportunity": {
+          "passed": true,
+          "opportunity_keywords": [],
+          "detail": "No data"
+        },
+        "review_pain_points": {
+          "passed": false,
+          "improvable": false,
+          "top_pain_point": null,
+          "pain_point_count": 0,
+          "detail": "No reviews available",
+          "warning": true
+        }
+      },
+      "opportunity_summary": "可切入红海｜$11售价，综合评分48分。",
+      "top3_evidence": [
+        "BSR排名: #N/A"
+      ],
+      "top3_risks": [
+        "竞争一般，需靠差异化打法切入"
+      ],
+      "entry_strategy": "差异化改款切入",
+      "review_insights": {
+        "pain_points": [],
+        "praises": [],
+        "improvable": false,
+        "summary": "No reviews available"
+      },
+      "rank": 9,
+      "delta": {
+        "score_change": 0,
+        "rank_change": 0,
+        "review_count_change": 0,
+        "is_new": true
+      }
+    },
+    {
+      "asin": "B01LR5RBZ8",
+      "title": "Amazon Basics Neoprene Dumbbell Hand Weights for Exercise and Muscle Toning",
+      "brand": "Unknown",
+      "price": 7.34,
+      "rating": 4.8,
+      "review_count": 0,
+      "bsr": null,
+      "bsr_category": null,
+      "keyword": "amazon basics neoprene dumbbell",
+      "source_page": "bsr_sports_&_outdoors",
+      "tier": "red_ocean_beatable",
+      "total_score": 46,
+      "score_breakdown": {
+        "demand_strength": {
+          "score": 3,
+          "max": 20,
+          "bsr": 99999,
+          "review_count": 0
+        },
+        "competition_beatable": {
+          "score": 20,
+          "max": 20,
+          "gates_passed": "3/3"
+        },
+        "profit_margin": {
+          "score": 5,
+          "max": 20,
+          "estimated_net_profit_usd": 0.4,
+          "gross_margin_pct": 70.0,
+          "selling_price": 7.34
+        },
+        "supply_chain_complexity": {
+          "score": 5,
+          "max": 10,
+          "detail": "+0 simple, -0 complex signals"
+        },
+        "compliance_risk": {
+          "score": 10,
+          "max": 10,
+          "risk_signals_found": 0
+        },
+        "review_pain_improvable": {
+          "score": 1,
+          "max": 10,
+          "pain_count": 0,
+          "improvable": false
+        },
+        "content_viral_potential": {
+          "score": 2,
+          "max": 10,
+          "viral_signals": 0
+        }
+      },
+      "gates": {
+        "market_concentration": {
+          "passed": true,
+          "top_brand_share": 0.0,
+          "detail": "No competitor data"
+        },
+        "entry_barrier": {
+          "passed": true,
+          "new_listings_count": 0,
+          "detail": "No competitor data"
+        },
+        "keyword_opportunity": {
+          "passed": true,
+          "opportunity_keywords": [],
+          "detail": "No data"
+        },
+        "review_pain_points": {
+          "passed": false,
+          "improvable": false,
+          "top_pain_point": null,
+          "pain_point_count": 0,
+          "detail": "No reviews available",
+          "warning": true
+        }
+      },
+      "opportunity_summary": "可切入红海｜$7售价，综合评分46分。",
+      "top3_evidence": [
+        "BSR排名: #N/A"
+      ],
+      "top3_risks": [
+        "竞争一般，需靠差异化打法切入"
+      ],
+      "entry_strategy": "差异化改款切入",
+      "review_insights": {
+        "pain_points": [],
+        "praises": [],
+        "improvable": false,
+        "summary": "No reviews available"
+      },
+      "rank": 10,
+      "delta": {
+        "score_change": 0,
+        "rank_change": 0,
+        "review_count_change": 0,
+        "is_new": true
+      }
+    }
+  ],
+  "tier_summary": {
+    "blue_ocean": 0,
+    "red_ocean_beatable": 10,
+    "red_ocean_avoid": 0
+  }
+}

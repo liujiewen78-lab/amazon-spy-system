@@ -1,0 +1,88 @@
+{
+  "version": "1.0",
+  "description": "Amazon Spy System - Scoring Rules & Filters",
+
+  "hard_exclusions": {
+    "weight_kg_max": 2.0,
+    "longest_side_cm_max": 45,
+    "excluded_categories": [
+      "Baby", "Infant", "Toddler", "Newborn",
+      "Medical Supplies", "Health Devices", "FSA Eligible",
+      "Grocery", "Food", "Beverage", "Gourmet Food",
+      "Ammunition", "Firearms", "Explosives",
+      "Hazardous Materials"
+    ],
+    "excluded_keywords_in_title": [
+      "prescription", "FDA", "medical grade", "infant", "baby formula",
+      "lithium battery standalone", "hazmat"
+    ],
+    "max_unit_cny": 500,
+    "max_total_budget_cny": 100000
+  },
+
+  "market_concentration": {
+    "red_threshold": 0.75,
+    "yellow_threshold": 0.60,
+    "top_n_results": 10
+  },
+
+  "entry_barrier": {
+    "high_review_threshold": 500,
+    "new_listing_days": 90,
+    "min_new_listings_in_top10": 2
+  },
+
+  "keyword_opportunity": {
+    "min_search_volume": 500,
+    "max_competing_products": 500
+  },
+
+  "scoring_weights": {
+    "demand_strength": 20,
+    "competition_beatable": 20,
+    "profit_margin": 20,
+    "supply_chain_complexity": 10,
+    "compliance_risk": 10,
+    "review_pain_point_improvable": 10,
+    "content_viral_potential": 10
+  },
+
+  "tier_thresholds": {
+    "blue_ocean_min": 70,
+    "red_ocean_beatable_min": 45,
+    "red_ocean_avoid_max": 44
+  },
+
+  "profit_model": {
+    "amazon_referral_fee_pct": 0.12,
+    "fba_fee_usd": 3.86,
+    "cny_to_usd_rate": 7.2,
+    "target_gross_margin_min": 0.40,
+    "target_net_profit_per_unit_min_usd": 5.0
+  },
+
+  "scraping": {
+    "delay_min_seconds": 3,
+    "delay_max_seconds": 8,
+    "max_retries": 3,
+    "timeout_seconds": 30,
+    "reviews_per_product": 50,
+    "top_results_to_analyze": 10
+  },
+
+  "categories_to_scan": [
+    "Kitchen & Dining",
+    "Home & Garden",
+    "Sports & Outdoors",
+    "Tools & Home Improvement",
+    "Pet Supplies",
+    "Office Products",
+    "Arts, Crafts & Sewing",
+    "Automotive",
+    "Beauty & Personal Care",
+    "Toys & Games",
+    "Electronics Accessories",
+    "Travel Accessories",
+    "Luggage & Travel Gear"
+  ]
+}

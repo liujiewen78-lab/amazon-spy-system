@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amazon Spy — 亚马逊选品雷达</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: rgba(255,255,255,0.07);
+    --text: #e8e8f0;
+    --text-muted: #6b6b88;
+    --accent: #7c6af7;
+    --accent-glow: rgba(124,106,247,0.2);
+    --green: #22d3a0;
+    --green-bg: rgba(34,211,160,0.08);
+    --yellow: #f59e0b;
+    --yellow-bg: rgba(245,158,11,0.08);
+    --red: #ef4444;
+    --red-bg: rgba(239,68,68,0.08);
+    --gold: #fbbf24;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Ambient glow */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 600px;
+    background: radial-gradient(ellipse, rgba(124,106,247,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 0 24px; }
+
+  /* Header */
+  header {
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,10,15,0.8);
+    backdrop-filter: blur(20px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .logo-text {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  .logo-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    margin-top: 1px;
+  }
+
+  .header-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* Stats bar */
+  .stats-bar {
+    padding: 20px 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+
+  .stat-value.green { color: var(--green); }
+  .stat-value.yellow { color: var(--yellow); }
+  .stat-value.red { color: var(--red); }
+  .stat-value.accent { color: var(--accent); }
+
+  .stat-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 0 12px;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    padding: 7px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-muted);
+    font-size: 13px;
+    font-family: 'Space Grotesk', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .filter-btn:hover { border-color: var(--accent); color: var(--text); }
+  .filter-btn.active { background: var(--accent-glow); border-color: var(--accent); color: var(--accent); }
+  .filter-btn.green-active { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+  .filter-btn.yellow-active { background: var(--yellow-bg); border-color: var(--yellow); color: var(--yellow); }
+  .filter-btn.red-active { background: var(--red-bg); border-color: var(--red); color: var(--red); }
+
+  .history-select {
+    margin-left: auto;
+    padding: 7px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+    cursor: pointer;
+    outline: none;
+  }
+
+  /* Product grid */
+  .product-grid {
+    display: grid;
+    gap: 12px;
+    padding-bottom: 40px;
+  }
+
+  .product-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 24px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .product-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    border-radius: 3px 0 0 3px;
+  }
+
+  .product-card.blue_ocean::before { background: var(--green); }
+  .product-card.red_ocean_beatable::before { background: var(--yellow); }
+  .product-card.red_ocean_avoid::before { background: var(--red); }
+
+  .product-card:hover {
+    border-color: rgba(255,255,255,0.15);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+
+  .card-rank {
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-muted);
+    min-width: 28px;
+    padding-top: 2px;
+  }
+
+  .card-title {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--text);
+  }
+
+  .card-score {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+  }
+
+  .score-number {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+
+  .score-number.high { color: var(--green); }
+  .score-number.mid { color: var(--yellow); }
+  .score-number.low { color: var(--red); }
+
+  .score-max {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .card-tier {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    margin-bottom: 10px;
+  }
+
+  .card-tier.blue_ocean { background: var(--green-bg); color: var(--green); border: 1px solid rgba(34,211,160,0.2); }
+  .card-tier.red_ocean_beatable { background: var(--yellow-bg); color: var(--yellow); border: 1px solid rgba(245,158,11,0.2); }
+  .card-tier.red_ocean_avoid { background: var(--red-bg); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
+
+  .card-meta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .meta-item strong { color: var(--text); }
+
+  .card-summary {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+    margin-top: 8px;
+  }
+
+  /* Score bar */
+  .score-bars {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-top: 12px;
+  }
+
+  .score-bar-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+
+  .score-bar-track {
+    width: 100%;
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.6s ease;
+  }
+
+  .score-bar-label {
+    font-size: 9px;
+    color: var(--text-muted);
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  /* Delta badge */
+  .delta-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  .delta-badge.up { color: var(--green); background: var(--green-bg); }
+  .delta-badge.down { color: var(--red); background: var(--red-bg); }
+  .delta-badge.new { color: var(--accent); background: var(--accent-glow); }
+
+  /* Gates indicator */
+  .gates-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+
+  .gate-chip {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .gate-chip.pass { background: var(--green-bg); color: var(--green); border: 1px solid rgba(34,211,160,0.15); }
+  .gate-chip.fail { background: var(--red-bg); color: var(--red); border: 1px solid rgba(239,68,68,0.15); }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(10px);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    max-width: 700px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 28px;
+    position: relative;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .modal-title {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 20px;
+    padding-right: 40px;
+  }
+
+  .modal-section {
+    margin-bottom: 20px;
+  }
+
+  .modal-section-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 10px;
+  }
+
+  .evidence-list { list-style: none; }
+  .evidence-list li {
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: var(--surface2);
+    margin-bottom: 6px;
+    font-size: 13px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .evidence-list li::before { content: '→'; color: var(--accent); flex-shrink: 0; }
+  .risk-list li::before { content: '⚠'; color: var(--yellow); flex-shrink: 0; }
+
+  .scorecard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .scorecard-item {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+
+  .scorecard-dim {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .scorecard-val {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  .asin-link {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    text-decoration: none;
+    padding: 4px 10px;
+    border: 1px solid rgba(124,106,247,0.3);
+    border-radius: 6px;
+    display: inline-block;
+  }
+
+  .asin-link:hover { background: var(--accent-glow); }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 80px 24px;
+    color: var(--text-muted);
+  }
+
+  .empty-icon { font-size: 48px; margin-bottom: 16px; }
+  .empty-title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+  .empty-desc { font-size: 14px; line-height: 1.6; }
+
+  /* Loading */
+  .loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 80px;
+    gap: 12px;
+    color: var(--text-muted);
+  }
+
+  .spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .stats-bar { grid-template-columns: repeat(2, 1fr); }
+    .score-bars { grid-template-columns: repeat(4, 1fr); }
+    .scorecard-grid { grid-template-columns: 1fr; }
+    .card-meta { gap: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">🛸</div>
+      <div>
+        <div class="logo-text">Amazon Spy</div>
+        <div class="logo-sub">亚马逊选品雷达 · 每小时更新</div>
+      </div>
+    </div>
+    <div class="header-status">
+      <div class="status-dot"></div>
+      <span id="last-updated">加载中...</span>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="stats-bar" id="stats-bar">
+    <div class="stat-card">
+      <div class="stat-label">本次分析</div>
+      <div class="stat-value accent" id="stat-total">—</div>
+      <div class="stat-sub">候选产品数</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">🟢 蓝海机会</div>
+      <div class="stat-value green" id="stat-blue">—</div>
+      <div class="stat-sub">四门全通过</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">🟡 可切入红海</div>
+      <div class="stat-value yellow" id="stat-yellow">—</div>
+      <div class="stat-sub">有条件进入</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">🔴 建议放弃</div>
+      <div class="stat-value red" id="stat-red">—</div>
+      <div class="stat-sub">竞争壁垒过高</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">最高评分</div>
+      <div class="stat-value accent" id="stat-top-score">—</div>
+      <div class="stat-sub">/ 100分</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="filter-btn active" onclick="filterCards('all', this)">全部</button>
+    <button class="filter-btn" onclick="filterCards('blue_ocean', this)">🟢 蓝海</button>
+    <button class="filter-btn" onclick="filterCards('red_ocean_beatable', this)">🟡 可切入</button>
+    <button class="filter-btn" onclick="filterCards('red_ocean_avoid', this)">🔴 放弃</button>
+    <select class="history-select" id="history-select" onchange="loadSnapshot(this.value)">
+      <option value="latest">📍 最新报告</option>
+    </select>
+  </div>
+
+  <div class="product-grid" id="product-grid">
+    <div class="loading"><div class="spinner"></div><span>正在加载选品数据...</span></div>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal-content">
+    <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+let currentData = null;
+let currentFilter = 'all';
+
+const TIER_LABELS = {
+  blue_ocean: '🟢 蓝海机会',
+  red_ocean_beatable: '🟡 可切入红海',
+  red_ocean_avoid: '🔴 建议放弃'
+};
+
+const SCORE_DIMS = {
+  demand_strength: '需求',
+  competition_beatable: '竞争',
+  profit_margin: '利润',
+  supply_chain_complexity: '供链',
+  compliance_risk: '合规',
+  review_pain_improvable: '痛点',
+  content_viral_potential: '传播'
+};
+
+const GATE_LABELS = {
+  market_concentration: '集中度',
+  entry_barrier: '进入门槛',
+  keyword_opportunity: '关键词',
+  review_pain_points: '评论痛点'
+};
+
+async function fetchJSON(url) {
+  const resp = await fetch(url + '?t=' + Date.now());
+  if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+  return resp.json();
+}
+
+async function init() {
+  try {
+    // Load index for history dropdown
+    const index = await fetchJSON('data/index.json').catch(() => []);
+    const select = document.getElementById('history-select');
+    index.slice(0, 24).forEach((item, i) => {
+      const opt = document.createElement('option');
+      opt.value = `data/snapshots/${item.hour_tag}_report.json`;
+      opt.textContent = `${item.hour_tag.replace('T', ' ')}:00`;
+      select.appendChild(opt);
+    });
+
+    // Load latest
+    await loadData('data/latest.json');
+  } catch (e) {
+    document.getElementById('product-grid').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">📡</div>
+        <div class="empty-title">暂无数据</div>
+        <div class="empty-desc">系统正在首次运行，请等待 GitHub Actions 完成第一次采集。<br>通常需要 5-10 分钟。</div>
+      </div>`;
+  }
+}
+
+async function loadData(url) {
+  const grid = document.getElementById('product-grid');
+  grid.innerHTML = '<div class="loading"><div class="spinner"></div><span>加载中...</span></div>';
+
+  const data = await fetchJSON(url);
+  currentData = data;
+  renderAll(data);
+}
+
+async function loadSnapshot(url) {
+  if (url === 'latest') {
+    await loadData('data/latest.json');
+  } else {
+    await loadData(url);
+  }
+}
+
+function renderAll(data) {
+  // Update header
+  const ts = data.generated_at || '';
+  document.getElementById('last-updated').textContent = '更新于 ' + (ts ? ts.replace('T', ' ').substring(0, 16) + ' UTC' : '未知');
+
+  // Update stats
+  document.getElementById('stat-total').textContent = data.total_analyzed || '—';
+  document.getElementById('stat-blue').textContent = data.tier_summary?.blue_ocean ?? '—';
+  document.getElementById('stat-yellow').textContent = data.tier_summary?.red_ocean_beatable ?? '—';
+  document.getElementById('stat-red').textContent = data.tier_summary?.red_ocean_avoid ?? '—';
+
+  const top10 = data.top10 || [];
+  const topScore = top10[0]?.total_score ?? '—';
+  document.getElementById('stat-top-score').textContent = topScore;
+
+  renderCards(top10, currentFilter);
+}
+
+function renderCards(products, filter) {
+  const grid = document.getElementById('product-grid');
+  const filtered = filter === 'all' ? products : products.filter(p => p.tier === filter);
+
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">该分类暂无产品</div><div class="empty-desc">尝试切换筛选条件</div></div>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map((p, i) => renderCard(p, i)).join('');
+}
+
+function renderCard(p, i) {
+  const score = p.total_score || 0;
+  const scoreClass = score >= 70 ? 'high' : score >= 45 ? 'mid' : 'low';
+  const breakdown = p.score_breakdown || {};
+  const gates = p.gates || {};
+  const delta = p.delta || {};
+
+  const deltaHtml = delta.is_new
+    ? '<span class="delta-badge new">★ NEW</span>'
+    : delta.score_change > 0
+    ? `<span class="delta-badge up">↑${delta.score_change}</span>`
+    : delta.score_change < 0
+    ? `<span class="delta-badge down">↓${Math.abs(delta.score_change)}</span>`
+    : '';
+
+  const scoreBars = Object.entries(SCORE_DIMS).map(([key, label]) => {
+    const dim = breakdown[key] || {};
+    const pct = dim.max ? (dim.score / dim.max * 100) : 0;
+    const color = pct >= 70 ? 'var(--green)' : pct >= 40 ? 'var(--yellow)' : 'var(--red)';
+    return `<div class="score-bar-item">
+      <div class="score-bar-track"><div class="score-bar-fill" style="width:${pct}%;background:${color}"></div></div>
+      <div class="score-bar-label">${label}</div>
+    </div>`;
+  }).join('');
+
+  const gateChips = Object.entries(GATE_LABELS).map(([key, label]) => {
+    const gate = gates[key] || {};
+    const pass = gate.passed !== false;
+    return `<span class="gate-chip ${pass ? 'pass' : 'fail'}">${pass ? '✓' : '✗'} ${label}</span>`;
+  }).join('');
+
+  return `
+  <div class="product-card ${p.tier}" onclick="openModal(${i})">
+    <div class="card-header">
+      <div class="card-rank">#${p.rank || i+1}</div>
+      <div class="card-title">${escapeHtml(p.title || 'Unknown')}</div>
+      <div class="card-score">
+        <div class="score-number ${scoreClass}">${score}</div>
+        <div class="score-max">/100</div>
+        ${deltaHtml}
+      </div>
+    </div>
+    <span class="card-tier ${p.tier}">${TIER_LABELS[p.tier] || p.tier}</span>
+    <div class="card-meta">
+      <div class="meta-item">💰 <strong>$${p.price?.toFixed(2) || '—'}</strong></div>
+      <div class="meta-item">⭐ <strong>${p.rating || '—'}</strong></div>
+      <div class="meta-item">💬 <strong>${formatNum(p.review_count)}</strong> 评论</div>
+      ${p.bsr ? `<div class="meta-item">📊 BSR <strong>#${formatNum(p.bsr)}</strong></div>` : ''}
+      <div class="meta-item">📁 <strong>${p.bsr_category || p.source_page || '—'}</strong></div>
+    </div>
+    <div class="score-bars">${scoreBars}</div>
+    <div class="gates-row">${gateChips}</div>
+    <div class="card-summary">${escapeHtml(p.opportunity_summary || '')}</div>
+  </div>`;
+}
+
+function openModal(idx) {
+  const products = currentFilter === 'all'
+    ? currentData?.top10 || []
+    : (currentData?.top10 || []).filter(p => p.tier === currentFilter);
+  const p = products[idx];
+  if (!p) return;
+
+  const breakdown = p.score_breakdown || {};
+  const gates = p.gates || {};
+
+  const evidenceHtml = (p.top3_evidence || []).map(e => `<li>${escapeHtml(e)}</li>`).join('');
+  const riskHtml = (p.top3_risks || []).map(r => `<li>${escapeHtml(r)}</li>`).join('');
+
+  const scorecardHtml = Object.entries(SCORE_DIMS).map(([key, label]) => {
+    const dim = breakdown[key] || {};
+    return `<div class="scorecard-item">
+      <div class="scorecard-dim">${label}</div>
+      <div class="scorecard-val">${dim.score ?? '—'}<span style="font-size:14px;color:var(--text-muted)">/${dim.max ?? '—'}</span></div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('modal-body').innerHTML = `
+    <div style="margin-bottom:16px">
+      <span class="card-tier ${p.tier}">${TIER_LABELS[p.tier] || p.tier}</span>
+    </div>
+    <div class="modal-title">${escapeHtml(p.title || '')}</div>
+
+    <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap">
+      ${p.asin ? `<a class="asin-link" href="https://www.amazon.com/dp/${p.asin}" target="_blank">🛒 ${p.asin}</a>` : ''}
+      <span style="font-family:monospace;font-size:12px;color:var(--text-muted);padding:4px 10px">
+        总分：<strong style="color:var(--text)">${p.total_score}/100</strong>
+      </span>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-title">评分卡</div>
+      <div class="scorecard-grid">${scorecardHtml}</div>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-title">主要证据</div>
+      <ul class="evidence-list">${evidenceHtml || '<li>暂无数据</li>'}</ul>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-title">主要风险</div>
+      <ul class="evidence-list risk-list">${riskHtml || '<li>暂无数据</li>'}</ul>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-title">建议切入策略</div>
+      <div style="background:var(--surface2);padding:12px 16px;border-radius:10px;font-size:13px;line-height:1.6">
+        ${escapeHtml(p.entry_strategy || '差异化改款切入')}
+      </div>
+    </div>
+  `;
+
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModalDirect();
+}
+function closeModalDirect() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+function filterCards(tier, btn) {
+  currentFilter = tier;
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.classList.remove('active', 'green-active', 'yellow-active', 'red-active');
+  });
+  if (tier === 'all') btn.classList.add('active');
+  else if (tier === 'blue_ocean') btn.classList.add('green-active');
+  else if (tier === 'red_ocean_beatable') btn.classList.add('yellow-active');
+  else btn.classList.add('red-active');
+
+  if (currentData) renderCards(currentData.top10 || [], tier);
+}
+
+function formatNum(n) {
+  if (!n) return '—';
+  if (n >= 1000) return (n/1000).toFixed(1) + 'K';
+  return n.toString();
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Auto-refresh every 5 minutes
+setInterval(() => loadData('data/latest.json').catch(() => {}), 5 * 60 * 1000);
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+[
+  {
+    "report_id": "2026-04-01T03:29:37Z",
+    "hour_tag": "2026-04-01T03",
+    "file": "snapshots/2026-04-01T03_report.json",
+    "top10_summary": [
+      {
+        "rank": 1,
+        "asin": "B07518RBH2",
+        "title": "ZELUS Weighted Vest, 6lb/8lb/12lb/16lb/2",
+        "tier": "red_ocean_beatable",
+        "score": 64
+      },
+      {
+        "rank": 2,
+        "asin": "B0FFTL7QNC",
+        "title": "Owala FreeSip Sway Insulated Stainless S",
+        "tier": "red_ocean_beatable",
+        "score": 64
+      },
+      {
+        "rank": 3,
+        "asin": "B0DR9QJRHZ",
+        "title": "STANLEY IceFlow 2.0 Flip Straw Tumbler w",
+        "tier": "red_ocean_beatable",
+        "score": 64
+      },
+      {
+        "rank": 4,
+        "asin": "B0CMP9M725",
+        "title": "TOSY Flying Ring - 36 RGB Multicolor or ",
+        "tier": "red_ocean_beatable",
+        "score": 62
+      },
+      {
+        "rank": 5,
+        "asin": "B0CRC73JTS",
+        "title": "Owala Kids FreeSip Insulated Stainless S",
+        "tier": "red_ocean_beatable",
+        "score": 60
+      },
+      {
+        "rank": 6,
+        "asin": "B08HN2V7GY",
+        "title": "Fun Boomerang for Kids - Easter Basket S",
+        "tier": "red_ocean_beatable",
+        "score": 55
+      },
+      {
+        "rank": 7,
+        "asin": "B08XQ35T47",
+        "title": "Seago Swim Goggles 2 Pack Anti-Fog Anti-",
+        "tier": "red_ocean_beatable",
+        "score": 53
+      },
+      {
+        "rank": 8,
+        "asin": "B094DV7SSS",
+        "title": "CAP Barbell Neoprene Dumbbell Weights Pa",
+        "tier": "red_ocean_beatable",
+        "score": 53
+      },
+      {
+        "rank": 9,
+        "asin": "B081ZW9KY8",
+        "title": "Speedo Kids' Swim Goggles Sunny G Ages 3",
+        "tier": "red_ocean_beatable",
+        "score": 48
+      },
+      {
+        "rank": 10,
+        "asin": "B01LR5RBZ8",
+        "title": "Amazon Basics Neoprene Dumbbell Hand Wei",
+        "tier": "red_ocean_beatable",
+        "score": 46
+      }
+    ]
+  },
+  {
+    "report_id": "2026-04-01T03:09:52Z",
+    "hour_tag": "2026-04-01T03",
+    "file": "snapshots/2026-04-01T03_report.json",
+    "top10_summary": [
+      {
+        "rank": 1,
+        "asin": "B07518RBH2",
+        "title": "ZELUS Weighted Vest, 6lb/8lb/12lb/16lb/2",
+        "tier": "red_ocean_beatable",
+        "score": 64
+      },
+      {
+        "rank": 2,
+        "asin": "B0FFTL7QNC",
+        "title": "Owala FreeSip Sway Insulated Stainless S",
+        "tier": "red_ocean_beatable",
+        "score": 64
+      },
+      {
+        "rank": 3,
+        "asin": "B0DR9QJRHZ",
+        "title": "STANLEY IceFlow 2.0 Flip Straw Tumbler w",
+        "tier": "red_ocean_beatable",
+        "score": 64
+      },
+      {
+        "rank": 4,
+        "asin": "B0CMP9M725",
+        "title": "TOSY Flying Ring - 36 RGB Multicolor or ",
+        "tier": "red_ocean_beatable",
+        "score": 62
+      },
+      {
+        "rank": 5,
+        "asin": "B0CRC73JTS",
+        "title": "Owala Kids FreeSip Insulated Stainless S",
+        "tier": "red_ocean_beatable",
+        "score": 60
+      },
+      {
+        "rank": 6,
+        "asin": "B08HN2V7GY",
+        "title": "Fun Boomerang for Kids - Easter Basket S",
+        "tier": "red_ocean_beatable",
+        "score": 55
+      },
+      {
+        "rank": 7,
+        "asin": "B08XQ35T47",
+        "title": "Seago Swim Goggles 2 Pack Anti-Fog Anti-",
+        "tier": "red_ocean_beatable",
+        "score": 53
+      },
+      {
+        "rank": 8,
+        "asin": "B094DV7SSS",
+        "title": "CAP Barbell Neoprene Dumbbell Weights Pa",
+        "tier": "red_ocean_beatable",
+        "score": 53
+      },
+      {
+        "rank": 9,
+        "asin": "B081ZW9KY8",
+        "title": "Speedo Kids' Swim Goggles Sunny G Ages 3",
+        "tier": "red_ocean_beatable",
+        "score": 48
+      },
+      {
+        "rank": 10,
+        "asin": "B01LR5RBZ8",
+        "title": "Amazon Basics Neoprene Dumbbell Hand Wei",
+        "tier": "red_ocean_beatable",
+        "score": 46
+      }
+    ]
+  },
+  {
+    "report_id": "2026-04-01T03:08:08Z",
+    "hour_tag": "2026-04-01T03",
+    "file": "snapshots/2026-04-01T03_report.json",
+    "top10_summary": []
+  }
+]
