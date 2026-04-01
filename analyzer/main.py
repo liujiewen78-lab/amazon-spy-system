@@ -5,12 +5,14 @@ Analyzer Main — Reads raw scraped data, runs 4-gate analysis + scoring, output
 import json
 import sys
 import logging
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
+
+CST = timezone(timedelta(hours=8))  # 北京时间 UTC+8
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "scrapers"))
 
-from filters import run_all_gates
+from filters import run_all_gates, PRICE_SWEET_MIN, PRICE_SWEET_MAX
 from scoring import calculate_total_score
 from review_analyzer import ReviewAnalyzer
 
@@ -65,35 +67,50 @@ def build_opportunity_summary(product: dict, gates: dict, scorecard: dict, tier:
 def build_top3_evidence(product: dict, gates: dict) -> list[str]:
     gate1 = gates.get("market_concentration", {})
     gate2 = gates.get("entry_barrier", {})
+    gate3 = gates.get("price_fit", {})
     gate4 = gates.get("review_pain_points", {})
 
     evidence = []
-    if gate1.get("top_brand_share"):
-        evidence.append(f"市场集中度：头部品牌占比约 {gate1['top_brand_share']:.0%}")
-    if gate2.get("low_review_listings") is not None:
-        evidence.append(f"进入门槛：Top10中有 {gate2['low_review_listings']} 个低评论竞品")
+    if gate1.get("top_brand_share") is not None:
+        share = gate1["top_brand_share"]
+        evidence.append(f"市场分散度：头部品牌占约 {share:.0%}，{'较分散' if share < 0.4 else '中等集中'}")
+    if gate2.get("beatable_count"):
+        bc = gate2["beatable_count"]
+        evidence.append(f"可切入空间：Top10中有 {bc} 个低评论竞品（<500条）")
+    if gate3.get("passed"):
+        evidence.append(f"价格区间友好：${product.get('price', 0):.0f}，在新手甜蜜区间 ${int(PRICE_SWEET_MIN)}-${int(PRICE_SWEET_MAX)}")
     if gate4.get("top_pain_point"):
-        evidence.append(f"评论痛点：用户频繁抱怨「{gate4['top_pain_point']}」，有改造空间")
+        evidence.append(f"评论痛点：用户抱怨「{gate4['top_pain_point']}」，可改造")
     if not evidence:
-        evidence.append(f"BSR排名: #{product.get('bsr', 'N/A')}")
-
+        evidence.append(f"BSR排名 #{product.get('bsr', 'N/A')}")
     return evidence[:3]
 
 
 def build_top3_risks(product: dict, gates: dict, scorecard: dict) -> list[str]:
     risks = []
     gate1 = gates.get("market_concentration", {})
+    gate2 = gates.get("entry_barrier", {})
+    gate3 = gates.get("price_fit", {})
     compliance = scorecard["breakdown"].get("compliance_risk", {})
 
-    if gate1.get("warning"):
-        risks.append(f"市场集中度高：{gate1.get('top_brand', 'Unknown')} 占主导")
-    if not gates.get("entry_barrier", {}).get("passed"):
-        risks.append("进入门槛：Top10竞品评论数普遍偏高，新品难以快速突围")
+    if gate1.get("price_war"):
+        risks.append(f"价格战警告：{gate1.get('price_war_reason', '已陷入价格战')}")
+    elif gate1.get("warning"):
+        risks.append(f"市场集中：{gate1.get('top_brand', 'Unknown')} 占约 {gate1.get('top_brand_share', 0):.0%}")
+    if gate2.get("all_entrenched"):
+        risks.append("进入门槛极高：Top10全是老链接，新品很难排上去")
+    elif not gate2.get("passed"):
+        risks.append(f"竞品评论数偏高，仅{gate2.get('beatable_count', 0)}个低评论竞品")
+    if not gate3.get("passed"):
+        price = product.get("price", 0)
+        if price < PRICE_SWEET_MIN:
+            risks.append(f"售价${price:.0f}偏低，利润空间可能不足")
+        elif price > PRICE_SWEET_MAX:
+            risks.append(f"售价${price:.0f}偏高，首批备货资金压力大")
     if compliance.get("score", 10) <= 4:
-        risks.append("合规风险：标题含潜在认证要求词，需核实证书要求")
+        risks.append("合规风险：含电池/电子/医疗等敏感词，需提前核实认证")
     if not risks:
-        risks.append("竞争一般，需靠差异化打法切入")
-
+        risks.append("整体风险可控，需差异化产品切入")
     return risks[:3]
 
 
@@ -151,7 +168,7 @@ def run():
                 "opportunity_summary": build_opportunity_summary(product, gates, scorecard, tier),
                 "top3_evidence": build_top3_evidence(product, gates),
                 "top3_risks": build_top3_risks(product, gates, scorecard),
-                "entry_strategy": (gates.get("keyword_opportunity", {}).get("opportunity_keywords") or ["差异化改款切入"])[0],
+                "entry_strategy": "、".join((gates.get("price_fit", {}).get("opportunity_keywords") or ["差异化改款切入"])[:2]),
                 "review_insights": review_analysis,
             }
             results.append(result)
@@ -188,12 +205,13 @@ def run():
         else:
             item["delta"] = {"score_change": 0, "rank_change": 0, "review_count_change": 0, "is_new": True}
 
-    # Build report
-    timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    hour_tag = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H")
+    # Build report — 北京时间 UTC+8
+    now_cst = datetime.now(CST)
+    timestamp = now_cst.strftime("%Y-%m-%d %H:%M:%S (北京时间)")
+    hour_tag = now_cst.strftime("%Y-%m-%dT%H")  # 用于文件名，保持 CST
 
     report = {
-        "report_id": timestamp,
+        "report_id": hour_tag,
         "generated_at": timestamp,
         "prev_report_id": prev_report.get("report_id") if prev_report else None,
         "total_analyzed": len(products),
