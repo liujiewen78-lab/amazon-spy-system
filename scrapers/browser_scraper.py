@@ -8,7 +8,9 @@ import time
 import random
 import logging
 import json
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
+
+CST = timezone(timedelta(hours=8))
 from pathlib import Path
 from playwright.sync_api import sync_playwright, Page, Browser, TimeoutError as PWTimeout
 
@@ -167,7 +169,7 @@ def _parse_bsr_products(page: Page, source: str) -> list[dict]:
                     'review_count': review_count,
                     'source_page': source,
                     'platform': 'amazon_us',
-                    'scraped_at': datetime.now(timezone.utc).isoformat(),
+                    'scraped_at': datetime.now(CST).isoformat(),
                 })
 
     except PWTimeout:
@@ -238,6 +240,73 @@ def _scrape_search_top10(page: Page, keyword: str) -> list[dict]:
         log.warning(f'Search scrape failed for "{keyword}": {e}')
 
     return competitors
+
+
+def _scrape_product_detail(page: Page, asin: str) -> tuple[str, int]:
+    """
+    访问产品详情页，抓取：
+    - 主图 URL（高清版，去掉尺寸限制后缀）
+    - 月销量估算（来自 "X+ bought in past month" 文字）
+    返回 (image_url, monthly_sales_estimate)
+    """
+    image_url = ""
+    monthly_est = 0
+    try:
+        url = f"https://www.amazon.com/dp/{asin}"
+        page.goto(url, wait_until='domcontentloaded', timeout=20000)
+        _human_delay(1, 2)
+
+        result = page.evaluate("""
+        () => {
+            // Main image
+            let imgUrl = '';
+            const mainImg = document.querySelector('#landingImage, #imgBlkFront, #ebooksImgBlkFront');
+            if (mainImg) {
+                // Try data-old-hires first (highest res)
+                imgUrl = mainImg.getAttribute('data-old-hires') ||
+                         mainImg.getAttribute('data-a-dynamic-image') ||
+                         mainImg.src || '';
+                // data-a-dynamic-image is JSON: pick first key
+                if (imgUrl.startsWith('{')) {
+                    try {
+                        const obj = JSON.parse(imgUrl);
+                        imgUrl = Object.keys(obj)[0] || '';
+                    } catch(e) { imgUrl = ''; }
+                }
+            }
+
+            // Monthly sales estimate
+            let monthly = 0;
+            const salesEl = document.querySelector('#social-proofing-faceout-title-tk_bought, [id*="social-proofing"]');
+            if (salesEl) {
+                const m = salesEl.textContent.match(/([\\d,]+)\\+?\\s*(bought|sold)/i);
+                if (m) monthly = parseInt(m[1].replace(/,/g, ''));
+            }
+            // Fallback: search all text for "X+ bought in past month"
+            if (!monthly) {
+                const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+                let node;
+                while (node = walker.nextNode()) {
+                    const m = node.textContent.match(/([\\d,]+)\\+?\\s*bought in past month/i);
+                    if (m) { monthly = parseInt(m[1].replace(/,/g,'')); break; }
+                }
+            }
+
+            return { imgUrl, monthly };
+        }
+        """)
+
+        image_url = result.get("imgUrl", "")
+        monthly_est = result.get("monthly", 0)
+
+        # Clean URL: remove size suffix like ._AC_SX679_ to get full size
+        import re
+        image_url = re.sub(r'\._[A-Z_,0-9]+_\.', '.', image_url)
+
+    except Exception as e:
+        log.debug(f'Product detail failed for {asin}: {e}')
+
+    return image_url, monthly_est
 
 
 def _scrape_reviews(page: Page, asin: str, max_reviews: int = 30) -> list[dict]:
@@ -418,6 +487,13 @@ def run_browser_scrape(config: dict, categories: list[str], max_enrich: int = 20
             log.info(f'  [{i+1}/{limit}] {product["asin"]} - {product["title"][:45]}')
             keyword = _build_keyword(product['title'])
             product['keyword'] = keyword
+
+            # Product detail page: grab main image + estimated monthly sales
+            image_url, monthly_est = _scrape_product_detail(page, product['asin'])
+            product['image_url'] = image_url
+            product['monthly_sales_est'] = monthly_est
+            log.info(f'    image={bool(image_url)}  monthly_est={monthly_est}')
+            _human_delay(1, 2)
 
             # Competitor search
             if keyword:
