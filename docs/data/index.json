@@ -1,5 +1,82 @@
 [
   {
+    "report_id": "2026-04-01T04:11:02Z",
+    "hour_tag": "2026-04-01T04",
+    "file": "snapshots/2026-04-01T04_report.json",
+    "top10_summary": [
+      {
+        "rank": 1,
+        "asin": "B0GP69J3FJ",
+        "title": "Under Armour Men's Tech Golf Polo",
+        "tier": "red_ocean_beatable",
+        "score": 73
+      },
+      {
+        "rank": 2,
+        "asin": "B07PMF9392",
+        "title": "CUSHIONAIRE Lane Cork Footbed Sandals fo",
+        "tier": "red_ocean_beatable",
+        "score": 73
+      },
+      {
+        "rank": 3,
+        "asin": "B0F3BB8D37",
+        "title": "Blink Mini 2K+ (newest model) – Plug-in ",
+        "tier": "red_ocean_beatable",
+        "score": 71
+      },
+      {
+        "rank": 4,
+        "asin": "B0D35RHMY1",
+        "title": "Soundcore by Anker Liberty 4 NC Wireless",
+        "tier": "red_ocean_beatable",
+        "score": 70
+      },
+      {
+        "rank": 5,
+        "asin": "B0C6W3D4RM",
+        "title": "Amazon Fire TV Stick 4K Select (newest m",
+        "tier": "red_ocean_beatable",
+        "score": 69
+      },
+      {
+        "rank": 6,
+        "asin": "B0GVKZPYXW",
+        "title": "GIMP Photo Editor 2026 on CD Disc | Prem",
+        "tier": "red_ocean_beatable",
+        "score": 65
+      },
+      {
+        "rank": 7,
+        "asin": "B01MSNNVVQ",
+        "title": "Turbotax Deluxe 2016 Federal Only, No St",
+        "tier": "red_ocean_beatable",
+        "score": 65
+      },
+      {
+        "rank": 8,
+        "asin": "B0FYP56KYF",
+        "title": "RUMIA Womens Casual Dresses Wrap V Neck ",
+        "tier": "red_ocean_beatable",
+        "score": 65
+      },
+      {
+        "rank": 9,
+        "asin": "B0GKR3D7SZ",
+        "title": "BrüMate Era Flip 40oz Tumbler with 100% ",
+        "tier": "red_ocean_beatable",
+        "score": 65
+      },
+      {
+        "rank": 10,
+        "asin": "B0GGKFM3KK",
+        "title": "Owala FreeSip Tumbler - Stainless Steel ",
+        "tier": "red_ocean_beatable",
+        "score": 65
+      }
+    ]
+  },
+  {
     "report_id": "2026-04-01T03:29:37Z",
     "hour_tag": "2026-04-01T03",
     "file": "snapshots/2026-04-01T03_report.json",
