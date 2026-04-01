@@ -3,901 +3,632 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Amazon Spy — 亚马逊选品雷达</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<title>选品雷达 — 暴富天团2026</title>
 <style>
-  :root {
-    --bg: #0a0a0f;
-    --surface: #12121a;
-    --surface2: #1a1a26;
-    --border: rgba(255,255,255,0.07);
-    --text: #e8e8f0;
-    --text-muted: #6b6b88;
-    --accent: #7c6af7;
-    --accent-glow: rgba(124,106,247,0.2);
-    --green: #22d3a0;
-    --green-bg: rgba(34,211,160,0.08);
-    --yellow: #f59e0b;
-    --yellow-bg: rgba(245,158,11,0.08);
-    --red: #ef4444;
-    --red-bg: rgba(239,68,68,0.08);
-    --gold: #fbbf24;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'Space Grotesk', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* Noise texture overlay */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* Ambient glow */
-  body::after {
-    content: '';
-    position: fixed;
-    top: -50%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 800px;
-    height: 600px;
-    background: radial-gradient(ellipse, rgba(124,106,247,0.06) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .container { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 0 24px; }
-
-  /* Header */
-  header {
-    border-bottom: 1px solid var(--border);
-    background: rgba(10,10,15,0.8);
-    backdrop-filter: blur(20px);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  .header-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 24px;
-    max-width: 1400px;
-    margin: 0 auto;
-  }
-
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .logo-icon {
-    width: 36px;
-    height: 36px;
-    background: linear-gradient(135deg, var(--accent), #a78bfa);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-  }
-
-  .logo-text {
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-  }
-
-  .logo-sub {
-    font-size: 11px;
-    color: var(--text-muted);
-    font-family: 'JetBrains Mono', monospace;
-    margin-top: 1px;
-  }
-
-  .header-status {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    color: var(--text-muted);
-    font-family: 'JetBrains Mono', monospace;
-  }
-
-  .status-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--green);
-    animation: pulse 2s infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-  }
-
-  /* Stats bar */
-  .stats-bar {
-    padding: 20px 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 12px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .stat-label {
-    font-size: 11px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    font-family: 'JetBrains Mono', monospace;
-  }
-
-  .stat-value {
-    font-size: 28px;
-    font-weight: 700;
-    letter-spacing: -1px;
-    line-height: 1;
-  }
-
-  .stat-value.green { color: var(--green); }
-  .stat-value.yellow { color: var(--yellow); }
-  .stat-value.red { color: var(--red); }
-  .stat-value.accent { color: var(--accent); }
-
-  .stat-sub {
-    font-size: 11px;
-    color: var(--text-muted);
-  }
-
-  /* Controls */
-  .controls {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 20px 0 12px;
-    flex-wrap: wrap;
-  }
-
-  .filter-btn {
-    padding: 7px 16px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--text-muted);
-    font-size: 13px;
-    font-family: 'Space Grotesk', sans-serif;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .filter-btn:hover { border-color: var(--accent); color: var(--text); }
-  .filter-btn.active { background: var(--accent-glow); border-color: var(--accent); color: var(--accent); }
-  .filter-btn.green-active { background: var(--green-bg); border-color: var(--green); color: var(--green); }
-  .filter-btn.yellow-active { background: var(--yellow-bg); border-color: var(--yellow); color: var(--yellow); }
-  .filter-btn.red-active { background: var(--red-bg); border-color: var(--red); color: var(--red); }
-
-  .history-select {
-    margin-left: auto;
-    padding: 7px 12px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--text);
-    font-size: 13px;
-    font-family: 'JetBrains Mono', monospace;
-    cursor: pointer;
-    outline: none;
-  }
-
-  /* Product grid */
-  .product-grid {
-    display: grid;
-    gap: 12px;
-    padding-bottom: 40px;
-  }
-
-  .product-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 20px 24px;
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .product-card::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 3px;
-    border-radius: 3px 0 0 3px;
-  }
-
-  .product-card.blue_ocean::before { background: var(--green); }
-  .product-card.red_ocean_beatable::before { background: var(--yellow); }
-  .product-card.red_ocean_avoid::before { background: var(--red); }
-
-  .product-card:hover {
-    border-color: rgba(255,255,255,0.15);
-    transform: translateY(-1px);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-  }
-
-  .card-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 12px;
-  }
-
-  .card-rank {
-    font-size: 11px;
-    font-family: 'JetBrains Mono', monospace;
-    color: var(--text-muted);
-    min-width: 28px;
-    padding-top: 2px;
-  }
-
-  .card-title {
-    flex: 1;
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 1.4;
-    color: var(--text);
-  }
-
-  .card-score {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 2px;
-  }
-
-  .score-number {
-    font-size: 28px;
-    font-weight: 700;
-    letter-spacing: -1px;
-    line-height: 1;
-  }
-
-  .score-number.high { color: var(--green); }
-  .score-number.mid { color: var(--yellow); }
-  .score-number.low { color: var(--red); }
-
-  .score-max {
-    font-size: 11px;
-    color: var(--text-muted);
-    font-family: 'JetBrains Mono', monospace;
-  }
-
-  .card-tier {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 3px 10px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.3px;
-    margin-bottom: 10px;
-  }
-
-  .card-tier.blue_ocean { background: var(--green-bg); color: var(--green); border: 1px solid rgba(34,211,160,0.2); }
-  .card-tier.red_ocean_beatable { background: var(--yellow-bg); color: var(--yellow); border: 1px solid rgba(245,158,11,0.2); }
-  .card-tier.red_ocean_avoid { background: var(--red-bg); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
-
-  .card-meta {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin-bottom: 10px;
-  }
-
-  .meta-item {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 12px;
-    color: var(--text-muted);
-    font-family: 'JetBrains Mono', monospace;
-  }
-
-  .meta-item strong { color: var(--text); }
-
-  .card-summary {
-    font-size: 13px;
-    color: var(--text-muted);
-    line-height: 1.5;
-    border-top: 1px solid var(--border);
-    padding-top: 10px;
-    margin-top: 8px;
-  }
-
-  /* Score bar */
-  .score-bars {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
-    margin-top: 12px;
-  }
-
-  .score-bar-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-
-  .score-bar-track {
-    width: 100%;
-    height: 4px;
-    background: var(--surface2);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-
-  .score-bar-fill {
-    height: 100%;
-    border-radius: 2px;
-    transition: width 0.6s ease;
-  }
-
-  .score-bar-label {
-    font-size: 9px;
-    color: var(--text-muted);
-    text-align: center;
-    font-family: 'JetBrains Mono', monospace;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
-  }
-
-  /* Delta badge */
-  .delta-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 2px;
-    font-size: 11px;
-    font-family: 'JetBrains Mono', monospace;
-    padding: 1px 6px;
-    border-radius: 4px;
-  }
-
-  .delta-badge.up { color: var(--green); background: var(--green-bg); }
-  .delta-badge.down { color: var(--red); background: var(--red-bg); }
-  .delta-badge.new { color: var(--accent); background: var(--accent-glow); }
-
-  /* Gates indicator */
-  .gates-row {
-    display: flex;
-    gap: 6px;
-    margin-top: 10px;
-    flex-wrap: wrap;
-  }
-
-  .gate-chip {
-    font-size: 10px;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-family: 'JetBrains Mono', monospace;
-    display: flex;
-    align-items: center;
-    gap: 3px;
-  }
-
-  .gate-chip.pass { background: var(--green-bg); color: var(--green); border: 1px solid rgba(34,211,160,0.15); }
-  .gate-chip.fail { background: var(--red-bg); color: var(--red); border: 1px solid rgba(239,68,68,0.15); }
-
-  /* Modal */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(10px);
-    z-index: 200;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-  }
-
-  .modal-overlay.open { display: flex; }
-
-  .modal {
-    background: var(--surface);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 20px;
-    max-width: 700px;
-    width: 100%;
-    max-height: 85vh;
-    overflow-y: auto;
-    padding: 28px;
-    position: relative;
-  }
-
-  .modal-close {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--surface2);
-    color: var(--text-muted);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-  }
-
-  .modal-title {
-    font-size: 16px;
-    font-weight: 600;
-    line-height: 1.4;
-    margin-bottom: 20px;
-    padding-right: 40px;
-  }
-
-  .modal-section {
-    margin-bottom: 20px;
-  }
-
-  .modal-section-title {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--text-muted);
-    font-family: 'JetBrains Mono', monospace;
-    margin-bottom: 10px;
-  }
-
-  .evidence-list { list-style: none; }
-  .evidence-list li {
-    padding: 8px 12px;
-    border-radius: 8px;
-    background: var(--surface2);
-    margin-bottom: 6px;
-    font-size: 13px;
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .evidence-list li::before { content: '→'; color: var(--accent); flex-shrink: 0; }
-  .risk-list li::before { content: '⚠'; color: var(--yellow); flex-shrink: 0; }
-
-  .scorecard-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-
-  .scorecard-item {
-    background: var(--surface2);
-    border-radius: 10px;
-    padding: 12px 14px;
-  }
-
-  .scorecard-dim {
-    font-size: 11px;
-    color: var(--text-muted);
-    margin-bottom: 4px;
-    font-family: 'JetBrains Mono', monospace;
-  }
-
-  .scorecard-val {
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-  }
-
-  .asin-link {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    color: var(--accent);
-    text-decoration: none;
-    padding: 4px 10px;
-    border: 1px solid rgba(124,106,247,0.3);
-    border-radius: 6px;
-    display: inline-block;
-  }
-
-  .asin-link:hover { background: var(--accent-glow); }
-
-  /* Empty state */
-  .empty-state {
-    text-align: center;
-    padding: 80px 24px;
-    color: var(--text-muted);
-  }
-
-  .empty-icon { font-size: 48px; margin-bottom: 16px; }
-  .empty-title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
-  .empty-desc { font-size: 14px; line-height: 1.6; }
-
-  /* Loading */
-  .loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 80px;
-    gap: 12px;
-    color: var(--text-muted);
-  }
-
-  .spinner {
-    width: 20px;
-    height: 20px;
-    border: 2px solid var(--border);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* Responsive */
-  @media (max-width: 768px) {
-    .stats-bar { grid-template-columns: repeat(2, 1fr); }
-    .score-bars { grid-template-columns: repeat(4, 1fr); }
-    .scorecard-grid { grid-template-columns: 1fr; }
-    .card-meta { gap: 10px; }
-  }
+:root {
+  --bg: #0d0d14;
+  --surface: #14141f;
+  --surface2: #1c1c2e;
+  --border: rgba(255,255,255,0.08);
+  --text: #e2e2f0;
+  --muted: #6b6b8a;
+  --accent: #7c6af7;
+  --green: #10d98a;
+  --green-bg: rgba(16,217,138,0.1);
+  --yellow: #f5a623;
+  --yellow-bg: rgba(245,166,35,0.1);
+  --red: #f04a6e;
+  --red-bg: rgba(240,74,110,0.1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+/* ── Header ── */
+header { background:rgba(13,13,20,0.95); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100; backdrop-filter:blur(12px); }
+.header-inner { max-width:1440px; margin:0 auto; padding:14px 24px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+.logo { font-size:18px; font-weight:700; letter-spacing:-0.3px; display:flex; align-items:center; gap:8px; }
+.logo-icon { font-size:22px; }
+.tagline { font-size:12px; color:var(--muted); margin-top:2px; }
+.header-meta { font-size:12px; color:var(--muted); text-align:right; line-height:1.8; }
+.header-meta strong { color:var(--text); }
+.dot { display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--green); animation:pulse 2s infinite; margin-right:4px; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+/* ── Tabs ── */
+.tabs { max-width:1440px; margin:0 auto; padding:20px 24px 0; display:flex; gap:8px; border-bottom:1px solid var(--border); }
+.tab { padding:10px 20px; border-radius:8px 8px 0 0; font-size:14px; font-weight:500; cursor:pointer; color:var(--muted); background:transparent; border:none; transition:all .2s; }
+.tab:hover { color:var(--text); background:var(--surface2); }
+.tab.active { color:var(--accent); background:var(--surface2); border-bottom:2px solid var(--accent); }
+
+/* ── Main layout ── */
+.main { max-width:1440px; margin:0 auto; padding:24px; }
+
+/* ── Stats bar ── */
+.stats-bar { display:flex; gap:12px; margin-bottom:24px; flex-wrap:wrap; }
+.stat-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px 20px; flex:1; min-width:140px; }
+.stat-label { font-size:11px; color:var(--muted); margin-bottom:4px; }
+.stat-val { font-size:24px; font-weight:700; }
+.stat-val.green { color:var(--green); }
+.stat-val.yellow { color:var(--yellow); }
+.stat-val.red { color:var(--red); }
+
+/* ── Filter bar ── */
+.filter-bar { display:flex; gap:8px; margin-bottom:20px; align-items:center; flex-wrap:wrap; }
+.filter-btn { padding:7px 16px; border-radius:20px; font-size:13px; cursor:pointer; border:1px solid var(--border); background:var(--surface); color:var(--muted); transition:all .2s; }
+.filter-btn:hover { color:var(--text); border-color:var(--accent); }
+.filter-btn.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+.filter-btn.f-green.active { background:var(--green); border-color:var(--green); }
+.filter-btn.f-yellow.active { background:var(--yellow); border-color:var(--yellow); color:#000; }
+.filter-btn.f-red.active { background:var(--red); border-color:var(--red); }
+
+/* ── Product grid ── */
+.grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:16px; }
+
+/* ── Product card ── */
+.card { background:var(--surface); border:1px solid var(--border); border-radius:16px; overflow:hidden; cursor:pointer; transition:all .2s; display:flex; flex-direction:column; }
+.card:hover { border-color:var(--accent); transform:translateY(-2px); box-shadow:0 8px 32px rgba(124,106,247,0.15); }
+
+.card-img { width:100%; height:180px; object-fit:cover; background:var(--surface2); display:block; }
+.card-img-placeholder { width:100%; height:180px; background:var(--surface2); display:flex; align-items:center; justify-content:center; font-size:40px; color:var(--muted); }
+
+.card-body { padding:14px 16px; flex:1; display:flex; flex-direction:column; gap:10px; }
+
+.card-header { display:flex; align-items:flex-start; gap:8px; justify-content:space-between; }
+.card-tier { font-size:10px; font-weight:700; padding:3px 8px; border-radius:20px; white-space:nowrap; flex-shrink:0; }
+.blue_ocean .card-tier { background:var(--green-bg); color:var(--green); }
+.red_ocean_beatable .card-tier { background:var(--yellow-bg); color:var(--yellow); }
+.red_ocean_avoid .card-tier { background:var(--red-bg); color:var(--red); }
+
+.card-rank { font-size:12px; color:var(--muted); font-weight:600; }
+.card-delta { font-size:11px; }
+.delta-up { color:var(--green); }
+.delta-down { color:var(--red); }
+.delta-new { color:var(--accent); }
+
+.card-title { font-size:13px; line-height:1.5; color:var(--text); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+
+.card-metrics { display:flex; gap:12px; flex-wrap:wrap; }
+.metric { display:flex; flex-direction:column; gap:2px; }
+.metric-label { font-size:10px; color:var(--muted); }
+.metric-val { font-size:15px; font-weight:700; }
+
+.card-score-bar { display:flex; align-items:center; gap:8px; }
+.score-label { font-size:11px; color:var(--muted); white-space:nowrap; }
+.score-track { flex:1; height:6px; background:var(--surface2); border-radius:3px; overflow:hidden; }
+.score-fill { height:100%; border-radius:3px; background:linear-gradient(90deg, var(--accent), #a78bfa); }
+.score-fill.high { background:linear-gradient(90deg, var(--green), #34d399); }
+.score-fill.mid { background:linear-gradient(90deg, var(--yellow), #fbbf24); }
+.score-num { font-size:13px; font-weight:700; min-width:28px; text-align:right; }
+
+.card-keyword { font-size:11px; color:var(--muted); font-family:monospace; background:var(--surface2); padding:3px 8px; border-radius:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+.card-summary { font-size:12px; color:var(--muted); line-height:1.5; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+
+/* ── Compare panel ── */
+.compare-panel { background:var(--surface); border:1px solid var(--border); border-radius:16px; overflow:hidden; }
+.compare-header { padding:16px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+.compare-title { font-size:16px; font-weight:700; }
+.compare-sub { font-size:12px; color:var(--muted); }
+.compare-hours { display:flex; gap:8px; flex-wrap:wrap; padding:12px 20px; border-bottom:1px solid var(--border); }
+.hour-btn { padding:5px 12px; font-size:12px; border-radius:8px; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; transition:all .2s; }
+.hour-btn:hover { border-color:var(--accent); color:var(--text); }
+.hour-btn.selected { background:var(--accent); border-color:var(--accent); color:#fff; }
+
+.compare-table-wrap { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+thead th { padding:10px 14px; text-align:left; background:var(--surface2); color:var(--muted); font-weight:600; font-size:12px; white-space:nowrap; position:sticky; top:0; }
+tbody tr { border-top:1px solid var(--border); transition:background .15s; }
+tbody tr:hover { background:var(--surface2); }
+tbody td { padding:10px 14px; vertical-align:middle; }
+.tbl-rank { font-weight:700; font-size:15px; min-width:30px; }
+.tbl-img { width:48px; height:48px; object-fit:cover; border-radius:8px; background:var(--surface2); display:block; }
+.tbl-img-ph { width:48px; height:48px; border-radius:8px; background:var(--surface2); display:flex; align-items:center; justify-content:center; font-size:18px; }
+.tbl-title { max-width:260px; font-size:12px; line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.tbl-score { font-weight:700; font-size:15px; }
+.tbl-tier { font-size:10px; padding:2px 6px; border-radius:10px; }
+.tbl-tier.blue_ocean { background:var(--green-bg); color:var(--green); }
+.tbl-tier.red_ocean_beatable { background:var(--yellow-bg); color:var(--yellow); }
+.tbl-tier.red_ocean_avoid { background:var(--red-bg); color:var(--red); }
+.tbl-delta { font-size:12px; white-space:nowrap; }
+.tbl-price, .tbl-reviews, .tbl-rating { font-family:monospace; }
+
+/* rank change arrows */
+.arrow { font-size:14px; margin-right:2px; }
+.arrow.up { color:var(--green); }
+.arrow.down { color:var(--red); }
+
+/* hour column */
+.hour-col { min-width:120px; text-align:center; }
+.hour-score { font-weight:700; }
+.hour-score.best { color:var(--green); }
+
+/* ── Modal ── */
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:200; display:none; align-items:center; justify-content:center; padding:24px; backdrop-filter:blur(4px); }
+.modal-overlay.open { display:flex; }
+.modal { background:var(--surface); border:1px solid var(--border); border-radius:20px; max-width:680px; width:100%; max-height:90vh; overflow-y:auto; }
+.modal-top { position:sticky; top:0; background:var(--surface); border-bottom:1px solid var(--border); padding:16px 20px; display:flex; align-items:center; justify-content:space-between; border-radius:20px 20px 0 0; z-index:1; }
+.modal-close { font-size:20px; cursor:pointer; color:var(--muted); background:none; border:none; padding:4px 8px; border-radius:8px; }
+.modal-close:hover { background:var(--surface2); color:var(--text); }
+.modal-content { padding:20px; display:flex; flex-direction:column; gap:20px; }
+.modal-img { width:100%; max-height:280px; object-fit:contain; border-radius:12px; background:var(--surface2); }
+.modal-title { font-size:16px; font-weight:700; line-height:1.5; }
+.modal-meta { display:flex; gap:10px; flex-wrap:wrap; }
+.meta-chip { font-size:12px; padding:4px 10px; border-radius:8px; background:var(--surface2); color:var(--muted); }
+.meta-chip a { color:var(--accent); text-decoration:none; }
+.meta-chip a:hover { text-decoration:underline; }
+.section-title { font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; margin-bottom:10px; }
+.scorecard-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; }
+.scorecard-item { background:var(--surface2); border-radius:10px; padding:10px 14px; }
+.sc-dim { font-size:11px; color:var(--muted); margin-bottom:4px; }
+.sc-bar { display:flex; align-items:center; gap:8px; }
+.sc-track { flex:1; height:4px; background:var(--bg); border-radius:2px; }
+.sc-fill { height:100%; border-radius:2px; background:var(--accent); }
+.sc-val { font-size:13px; font-weight:700; min-width:32px; text-align:right; }
+.list-items { list-style:none; display:flex; flex-direction:column; gap:6px; }
+.list-items li { font-size:13px; padding:8px 12px; border-radius:8px; background:var(--surface2); line-height:1.5; }
+.list-items.risk li { border-left:3px solid var(--red); }
+.entry-box { background:var(--surface2); border-radius:10px; padding:12px 16px; font-size:13px; line-height:1.6; color:var(--text); }
+.monthly-sales { font-size:13px; color:var(--green); }
+
+/* ── Empty / loading ── */
+.empty { text-align:center; padding:80px 24px; color:var(--muted); }
+.empty-icon { font-size:48px; margin-bottom:16px; }
+.loading { display:flex; align-items:center; justify-content:center; gap:8px; padding:40px; color:var(--muted); }
+.spinner { width:20px; height:20px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .6s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* ── Responsive ── */
+@media (max-width:640px) {
+  .grid { grid-template-columns:1fr; }
+  .scorecard-grid { grid-template-columns:1fr; }
+  .header-inner { flex-direction:column; align-items:flex-start; }
+}
 </style>
 </head>
 <body>
 
 <header>
   <div class="header-inner">
-    <div class="logo">
-      <div class="logo-icon">🛸</div>
-      <div>
-        <div class="logo-text">Amazon Spy</div>
-        <div class="logo-sub">亚马逊选品雷达 · 每小时更新</div>
-      </div>
+    <div>
+      <div class="logo"><span class="logo-icon">🕵️</span> 选品雷达 · 暴富天团2026</div>
+      <div class="tagline">每小时自动扫描亚马逊美国站，找新手可进入的蓝海产品</div>
     </div>
-    <div class="header-status">
-      <div class="status-dot"></div>
-      <span id="last-updated">加载中...</span>
+    <div class="header-meta" id="header-meta">
+      <div><span class="dot"></span>实时运行中</div>
+      <div>更新时间：<strong id="update-time">加载中…</strong></div>
+      <div>本次扫描：<strong id="scan-count">—</strong> 个产品</div>
     </div>
   </div>
 </header>
 
-<div class="container">
-  <div class="stats-bar" id="stats-bar">
-    <div class="stat-card">
-      <div class="stat-label">本次分析</div>
-      <div class="stat-value accent" id="stat-total">—</div>
-      <div class="stat-sub">候选产品数</div>
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('current',this)">📊 本轮Top10</button>
+  <button class="tab" onclick="switchTab('compare',this)">🔄 多轮对比</button>
+</div>
+
+<div class="main">
+  <!-- 本轮Top10 tab -->
+  <div id="tab-current">
+    <div class="stats-bar" id="stats-bar">
+      <div class="stat-card"><div class="stat-label">🟢 蓝海机会</div><div class="stat-val green" id="cnt-blue">—</div></div>
+      <div class="stat-card"><div class="stat-label">🟡 可打红海</div><div class="stat-val yellow" id="cnt-yellow">—</div></div>
+      <div class="stat-card"><div class="stat-label">🔴 建议放弃</div><div class="stat-val red" id="cnt-red">—</div></div>
+      <div class="stat-card"><div class="stat-label">📦 本轮候选</div><div class="stat-val" id="cnt-total">—</div></div>
     </div>
-    <div class="stat-card">
-      <div class="stat-label">🟢 蓝海机会</div>
-      <div class="stat-value green" id="stat-blue">—</div>
-      <div class="stat-sub">四门全通过</div>
+
+    <div class="filter-bar">
+      <span style="font-size:13px;color:var(--muted)">筛选：</span>
+      <button class="filter-btn active" onclick="setFilter('all',this)">全部</button>
+      <button class="filter-btn f-green" onclick="setFilter('blue_ocean',this)">🟢 蓝海</button>
+      <button class="filter-btn f-yellow" onclick="setFilter('red_ocean_beatable',this)">🟡 可打</button>
+      <button class="filter-btn f-red" onclick="setFilter('red_ocean_avoid',this)">🔴 放弃</button>
     </div>
-    <div class="stat-card">
-      <div class="stat-label">🟡 可切入红海</div>
-      <div class="stat-value yellow" id="stat-yellow">—</div>
-      <div class="stat-sub">有条件进入</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">🔴 建议放弃</div>
-      <div class="stat-value red" id="stat-red">—</div>
-      <div class="stat-sub">竞争壁垒过高</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">最高评分</div>
-      <div class="stat-value accent" id="stat-top-score">—</div>
-      <div class="stat-sub">/ 100分</div>
+
+    <div class="grid" id="card-grid">
+      <div class="loading" style="grid-column:1/-1"><div class="spinner"></div> 正在加载数据…</div>
     </div>
   </div>
 
-  <div class="controls">
-    <button class="filter-btn active" onclick="filterCards('all', this)">全部</button>
-    <button class="filter-btn" onclick="filterCards('blue_ocean', this)">🟢 蓝海</button>
-    <button class="filter-btn" onclick="filterCards('red_ocean_beatable', this)">🟡 可切入</button>
-    <button class="filter-btn" onclick="filterCards('red_ocean_avoid', this)">🔴 放弃</button>
-    <select class="history-select" id="history-select" onchange="loadSnapshot(this.value)">
-      <option value="latest">📍 最新报告</option>
-    </select>
-  </div>
-
-  <div class="product-grid" id="product-grid">
-    <div class="loading"><div class="spinner"></div><span>正在加载选品数据...</span></div>
+  <!-- 多轮对比 tab -->
+  <div id="tab-compare" style="display:none">
+    <div class="compare-panel">
+      <div class="compare-header">
+        <div>
+          <div class="compare-title">多轮选品对比</div>
+          <div class="compare-sub">选择要对比的小时批次（最多4轮），横向查看Top10变化</div>
+        </div>
+      </div>
+      <div class="compare-hours" id="compare-hours">
+        <div class="loading"><div class="spinner"></div> 加载历史记录…</div>
+      </div>
+      <div class="compare-table-wrap">
+        <div id="compare-table-area">
+          <div class="empty"><div class="empty-icon">📋</div><div>请至少选择2轮数据进行对比</div></div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- Detail Modal -->
+<!-- Modal -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
-  <div class="modal" id="modal-content">
-    <button class="modal-close" onclick="closeModalDirect()">✕</button>
-    <div id="modal-body"></div>
+  <div class="modal">
+    <div class="modal-top">
+      <div style="font-size:14px;font-weight:700" id="modal-rank-label">产品详情</div>
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    </div>
+    <div class="modal-content" id="modal-content">加载中…</div>
   </div>
 </div>
 
 <script>
+// ══════════════════════════════════════════
+// Constants
+// ══════════════════════════════════════════
+const TIER_LABEL = {
+  blue_ocean: '🟢 蓝海机会',
+  red_ocean_beatable: '🟡 可打红海',
+  red_ocean_avoid: '🔴 建议放弃',
+};
+const SCORE_DIMS = {
+  demand_strength:         '需求强度',
+  competition_beatable:    '竞争可打',
+  profit_margin:           '利润空间',
+  supply_chain_complexity: '供应链简单',
+  compliance_risk:         '合规安全',
+  review_pain_improvable:  '痛点可改',
+  content_viral_potential: '传播潜力',
+  newbie_fit:              '新手适配',
+};
+
 let currentData = null;
 let currentFilter = 'all';
+let indexData = [];
+let selectedHours = [];
 
-const TIER_LABELS = {
-  blue_ocean: '🟢 蓝海机会',
-  red_ocean_beatable: '🟡 可切入红海',
-  red_ocean_avoid: '🔴 建议放弃'
-};
+// ══════════════════════════════════════════
+// Tab switching
+// ══════════════════════════════════════════
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-current').style.display = name === 'current' ? '' : 'none';
+  document.getElementById('tab-compare').style.display = name === 'compare' ? '' : 'none';
+  if (name === 'compare' && indexData.length === 0) loadIndex();
+}
 
-const SCORE_DIMS = {
-  demand_strength: '需求',
-  competition_beatable: '竞争',
-  profit_margin: '利润',
-  supply_chain_complexity: '供链',
-  compliance_risk: '合规',
-  review_pain_improvable: '痛点',
-  content_viral_potential: '传播'
-};
-
-const GATE_LABELS = {
-  market_concentration: '集中度',
-  entry_barrier: '进入门槛',
-  keyword_opportunity: '关键词',
-  review_pain_points: '评论痛点'
-};
-
-async function fetchJSON(url) {
-  const resp = await fetch(url + '?t=' + Date.now());
-  if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-  return resp.json();
+// ══════════════════════════════════════════
+// Data loading
+// ══════════════════════════════════════════
+async function loadJSON(url) {
+  const r = await fetch(url + '?t=' + Date.now());
+  if (!r.ok) throw new Error(r.status);
+  return r.json();
 }
 
 async function init() {
   try {
-    // Load index for history dropdown
-    const index = await fetchJSON('data/index.json').catch(() => []);
-    const select = document.getElementById('history-select');
-    index.slice(0, 24).forEach((item, i) => {
-      const opt = document.createElement('option');
-      opt.value = `data/snapshots/${item.hour_tag}_report.json`;
-      opt.textContent = `${item.hour_tag.replace('T', ' ')}:00`;
-      select.appendChild(opt);
-    });
-
-    // Load latest
-    await loadData('data/latest.json');
-  } catch (e) {
-    document.getElementById('product-grid').innerHTML = `
-      <div class="empty-state">
-        <div class="empty-icon">📡</div>
-        <div class="empty-title">暂无数据</div>
-        <div class="empty-desc">系统正在首次运行，请等待 GitHub Actions 完成第一次采集。<br>通常需要 5-10 分钟。</div>
-      </div>`;
+    const data = await loadJSON('data/latest.json');
+    currentData = data;
+    renderHeader(data);
+    renderCards(data.top10 || [], currentFilter);
+  } catch(e) {
+    document.getElementById('card-grid').innerHTML =
+      '<div class="empty" style="grid-column:1/-1"><div class="empty-icon">⚠️</div><div>暂无数据，等待第一次采集完成</div></div>';
   }
 }
 
-async function loadData(url) {
-  const grid = document.getElementById('product-grid');
-  grid.innerHTML = '<div class="loading"><div class="spinner"></div><span>加载中...</span></div>';
-
-  const data = await fetchJSON(url);
-  currentData = data;
-  renderAll(data);
-}
-
-async function loadSnapshot(url) {
-  if (url === 'latest') {
-    await loadData('data/latest.json');
-  } else {
-    await loadData(url);
+async function loadIndex() {
+  try {
+    const idx = await loadJSON('data/index.json');
+    indexData = idx || [];
+    renderHourButtons();
+  } catch(e) {
+    document.getElementById('compare-hours').innerHTML =
+      '<div style="color:var(--muted);font-size:13px;padding:8px">暂无历史记录</div>';
   }
 }
 
-function renderAll(data) {
-  // Update header
-  const ts = data.generated_at || '';
-  document.getElementById('last-updated').textContent = '更新于 ' + (ts ? ts.replace('T', ' ').substring(0, 16) + ' UTC' : '未知');
-
-  // Update stats
-  document.getElementById('stat-total').textContent = data.total_analyzed || '—';
-  document.getElementById('stat-blue').textContent = data.tier_summary?.blue_ocean ?? '—';
-  document.getElementById('stat-yellow').textContent = data.tier_summary?.red_ocean_beatable ?? '—';
-  document.getElementById('stat-red').textContent = data.tier_summary?.red_ocean_avoid ?? '—';
-
+// ══════════════════════════════════════════
+// Header
+// ══════════════════════════════════════════
+function renderHeader(data) {
+  document.getElementById('update-time').textContent = data.generated_at || '—';
+  document.getElementById('scan-count').textContent = data.total_analyzed || '—';
   const top10 = data.top10 || [];
-  const topScore = top10[0]?.total_score ?? '—';
-  document.getElementById('stat-top-score').textContent = topScore;
-
-  renderCards(top10, currentFilter);
+  const blue = top10.filter(p => p.tier === 'blue_ocean').length;
+  const yellow = top10.filter(p => p.tier === 'red_ocean_beatable').length;
+  const red = top10.filter(p => p.tier === 'red_ocean_avoid').length;
+  document.getElementById('cnt-blue').textContent = blue;
+  document.getElementById('cnt-yellow').textContent = yellow;
+  document.getElementById('cnt-red').textContent = red;
+  document.getElementById('cnt-total').textContent = data.total_analyzed || '—';
 }
 
-function renderCards(products, filter) {
-  const grid = document.getElementById('product-grid');
-  const filtered = filter === 'all' ? products : products.filter(p => p.tier === filter);
-
-  if (!filtered.length) {
-    grid.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">该分类暂无产品</div><div class="empty-desc">尝试切换筛选条件</div></div>';
-    return;
-  }
-
-  grid.innerHTML = filtered.map((p, i) => renderCard(p, i)).join('');
-}
-
-function renderCard(p, i) {
-  const score = p.total_score || 0;
-  const scoreClass = score >= 70 ? 'high' : score >= 45 ? 'mid' : 'low';
-  const breakdown = p.score_breakdown || {};
-  const gates = p.gates || {};
-  const delta = p.delta || {};
-
-  const deltaHtml = delta.is_new
-    ? '<span class="delta-badge new">★ NEW</span>'
-    : delta.score_change > 0
-    ? `<span class="delta-badge up">↑${delta.score_change}</span>`
-    : delta.score_change < 0
-    ? `<span class="delta-badge down">↓${Math.abs(delta.score_change)}</span>`
-    : '';
-
-  const scoreBars = Object.entries(SCORE_DIMS).map(([key, label]) => {
-    const dim = breakdown[key] || {};
-    const pct = dim.max ? (dim.score / dim.max * 100) : 0;
-    const color = pct >= 70 ? 'var(--green)' : pct >= 40 ? 'var(--yellow)' : 'var(--red)';
-    return `<div class="score-bar-item">
-      <div class="score-bar-track"><div class="score-bar-fill" style="width:${pct}%;background:${color}"></div></div>
-      <div class="score-bar-label">${label}</div>
-    </div>`;
-  }).join('');
-
-  const gateChips = Object.entries(GATE_LABELS).map(([key, label]) => {
-    const gate = gates[key] || {};
-    const pass = gate.passed !== false;
-    return `<span class="gate-chip ${pass ? 'pass' : 'fail'}">${pass ? '✓' : '✗'} ${label}</span>`;
-  }).join('');
-
-  return `
-  <div class="product-card ${p.tier}" onclick="openModal(${i})">
-    <div class="card-header">
-      <div class="card-rank">#${p.rank || i+1}</div>
-      <div class="card-title">${escapeHtml(p.title || 'Unknown')}</div>
-      <div class="card-score">
-        <div class="score-number ${scoreClass}">${score}</div>
-        <div class="score-max">/100</div>
-        ${deltaHtml}
-      </div>
-    </div>
-    <span class="card-tier ${p.tier}">${TIER_LABELS[p.tier] || p.tier}</span>
-    <div class="card-meta">
-      <div class="meta-item">💰 <strong>$${p.price?.toFixed(2) || '—'}</strong></div>
-      <div class="meta-item">⭐ <strong>${p.rating || '—'}</strong></div>
-      <div class="meta-item">💬 <strong>${formatNum(p.review_count)}</strong> 评论</div>
-      ${p.bsr ? `<div class="meta-item">📊 BSR <strong>#${formatNum(p.bsr)}</strong></div>` : ''}
-      <div class="meta-item">📁 <strong>${p.bsr_category || p.source_page || '—'}</strong></div>
-    </div>
-    <div class="score-bars">${scoreBars}</div>
-    <div class="gates-row">${gateChips}</div>
-    <div class="card-summary">${escapeHtml(p.opportunity_summary || '')}</div>
-  </div>`;
-}
-
-function openModal(idx) {
-  const products = currentFilter === 'all'
-    ? currentData?.top10 || []
-    : (currentData?.top10 || []).filter(p => p.tier === currentFilter);
-  const p = products[idx];
-  if (!p) return;
-
-  const breakdown = p.score_breakdown || {};
-  const gates = p.gates || {};
-
-  const evidenceHtml = (p.top3_evidence || []).map(e => `<li>${escapeHtml(e)}</li>`).join('');
-  const riskHtml = (p.top3_risks || []).map(r => `<li>${escapeHtml(r)}</li>`).join('');
-
-  const scorecardHtml = Object.entries(SCORE_DIMS).map(([key, label]) => {
-    const dim = breakdown[key] || {};
-    return `<div class="scorecard-item">
-      <div class="scorecard-dim">${label}</div>
-      <div class="scorecard-val">${dim.score ?? '—'}<span style="font-size:14px;color:var(--text-muted)">/${dim.max ?? '—'}</span></div>
-    </div>`;
-  }).join('');
-
-  document.getElementById('modal-body').innerHTML = `
-    <div style="margin-bottom:16px">
-      <span class="card-tier ${p.tier}">${TIER_LABELS[p.tier] || p.tier}</span>
-    </div>
-    <div class="modal-title">${escapeHtml(p.title || '')}</div>
-
-    <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap">
-      ${p.asin ? `<a class="asin-link" href="https://www.amazon.com/dp/${p.asin}" target="_blank">🛒 ${p.asin}</a>` : ''}
-      <span style="font-family:monospace;font-size:12px;color:var(--text-muted);padding:4px 10px">
-        总分：<strong style="color:var(--text)">${p.total_score}/100</strong>
-      </span>
-    </div>
-
-    <div class="modal-section">
-      <div class="modal-section-title">评分卡</div>
-      <div class="scorecard-grid">${scorecardHtml}</div>
-    </div>
-
-    <div class="modal-section">
-      <div class="modal-section-title">主要证据</div>
-      <ul class="evidence-list">${evidenceHtml || '<li>暂无数据</li>'}</ul>
-    </div>
-
-    <div class="modal-section">
-      <div class="modal-section-title">主要风险</div>
-      <ul class="evidence-list risk-list">${riskHtml || '<li>暂无数据</li>'}</ul>
-    </div>
-
-    <div class="modal-section">
-      <div class="modal-section-title">建议切入策略</div>
-      <div style="background:var(--surface2);padding:12px 16px;border-radius:10px;font-size:13px;line-height:1.6">
-        ${escapeHtml(p.entry_strategy || '差异化改款切入')}
-      </div>
-    </div>
-  `;
-
-  document.getElementById('modal-overlay').classList.add('open');
-}
-
-function closeModal(e) {
-  if (e.target === document.getElementById('modal-overlay')) closeModalDirect();
-}
-function closeModalDirect() {
-  document.getElementById('modal-overlay').classList.remove('open');
-}
-
-function filterCards(tier, btn) {
+// ══════════════════════════════════════════
+// Card grid
+// ══════════════════════════════════════════
+function setFilter(tier, btn) {
   currentFilter = tier;
-  document.querySelectorAll('.filter-btn').forEach(b => {
-    b.classList.remove('active', 'green-active', 'yellow-active', 'red-active');
-  });
-  if (tier === 'all') btn.classList.add('active');
-  else if (tier === 'blue_ocean') btn.classList.add('green-active');
-  else if (tier === 'red_ocean_beatable') btn.classList.add('yellow-active');
-  else btn.classList.add('red-active');
-
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
   if (currentData) renderCards(currentData.top10 || [], tier);
 }
 
-function formatNum(n) {
-  if (!n) return '—';
-  if (n >= 1000) return (n/1000).toFixed(1) + 'K';
-  return n.toString();
+function renderCards(products, tier) {
+  const list = tier === 'all' ? products : products.filter(p => p.tier === tier);
+  const grid = document.getElementById('card-grid');
+  if (!list.length) {
+    grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🔍</div><div>本轮暂无此类产品</div></div>';
+    return;
+  }
+  grid.innerHTML = list.map((p, i) => cardHTML(p, i)).join('');
 }
 
-function escapeHtml(str) {
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function scoreColor(s) {
+  return s >= 65 ? 'high' : s >= 45 ? 'mid' : '';
+}
+
+function deltaHTML(d) {
+  if (!d) return '';
+  if (d.is_new) return '<span class="delta-new">✦ 新上榜</span>';
+  const rc = d.rank_change || 0;
+  const sc = d.score_change || 0;
+  let html = '';
+  if (rc > 0) html += `<span class="delta-up">▲${rc}</span> `;
+  else if (rc < 0) html += `<span class="delta-down">▼${Math.abs(rc)}</span> `;
+  if (sc > 0) html += `<span class="delta-up">+${sc}分</span>`;
+  else if (sc < 0) html += `<span class="delta-down">${sc}分</span>`;
+  return html;
+}
+
+function fmt(n) { return n >= 1000 ? (n/1000).toFixed(1)+'K' : (n||'—'); }
+
+function cardHTML(p, idx) {
+  const score = p.total_score || 0;
+  const pct = (score / 100 * 100).toFixed(0);
+  const imgSrc = p.image_url || '';
+  const imgBlock = imgSrc
+    ? `<img class="card-img" src="${escHtml(imgSrc)}" alt="" loading="lazy" onerror="this.style.display='none';this.nextSibling.style.display='flex'">`
+    : '';
+  const phBlock = `<div class="card-img-placeholder" style="${imgSrc ? 'display:none' : ''}">📦</div>`;
+
+  return `
+<div class="card ${p.tier}" onclick="openModal(${idx})">
+  ${imgBlock}${phBlock}
+  <div class="card-body">
+    <div class="card-header">
+      <div>
+        <span class="card-rank">#${p.rank || idx+1}</span>
+        <span style="margin-left:6px">${deltaHTML(p.delta)}</span>
+      </div>
+      <span class="card-tier">${TIER_LABEL[p.tier] || p.tier}</span>
+    </div>
+    <div class="card-title">${escHtml(p.title || '')}</div>
+    <div class="card-metrics">
+      <div class="metric"><div class="metric-label">售价</div><div class="metric-val">$${(p.price||0).toFixed(0)}</div></div>
+      <div class="metric"><div class="metric-label">评分</div><div class="metric-val">${p.rating||'—'}★</div></div>
+      <div class="metric"><div class="metric-label">评论数</div><div class="metric-val">${fmt(p.review_count)}</div></div>
+      ${p.monthly_sales_est ? `<div class="metric"><div class="metric-label">月销估算</div><div class="metric-val" style="color:var(--green)">${fmt(p.monthly_sales_est)}</div></div>` : ''}
+    </div>
+    <div class="card-score-bar">
+      <span class="score-label">综合评分</span>
+      <div class="score-track"><div class="score-fill ${scoreColor(score)}" style="width:${pct}%"></div></div>
+      <span class="score-num">${score}</span>
+    </div>
+    ${p.keyword ? `<div class="card-keyword">🔑 ${escHtml(p.keyword)}</div>` : ''}
+    <div class="card-summary">${escHtml(p.opportunity_summary || '')}</div>
+  </div>
+</div>`;
+}
+
+// ══════════════════════════════════════════
+// Modal
+// ══════════════════════════════════════════
+function openModal(idx) {
+  const list = currentFilter === 'all' ? (currentData?.top10 || []) : (currentData?.top10||[]).filter(p=>p.tier===currentFilter);
+  const p = list[idx];
+  if (!p) return;
+
+  document.getElementById('modal-rank-label').textContent = `#${p.rank} ${TIER_LABEL[p.tier]||p.tier}`;
+
+  const bd = p.score_breakdown || {};
+  const gates = p.gates || {};
+  const imgSrc = p.image_url || '';
+
+  const scorecardHTML = Object.entries(SCORE_DIMS).map(([key, label]) => {
+    const dim = bd[key] || {};
+    const s = dim.score ?? 0;
+    const mx = dim.max ?? 10;
+    const pct = ((s / mx) * 100).toFixed(0);
+    const detail = dim.detail || '';
+    return `<div class="scorecard-item">
+      <div class="sc-dim">${label}${detail ? `<span style="float:right;font-size:10px;color:var(--muted)">${escHtml(detail.substring(0,30))}</span>` : ''}</div>
+      <div class="sc-bar">
+        <div class="sc-track"><div class="sc-fill" style="width:${pct}%;background:${s/mx>=0.7?'var(--green)':s/mx>=0.4?'var(--yellow)':'var(--red)'}"></div></div>
+        <span class="sc-val">${s}/${mx}</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  const evHTML = (p.top3_evidence||[]).map(e=>`<li>${escHtml(e)}</li>`).join('') || '<li>暂无数据</li>';
+  const rkHTML = (p.top3_risks||[]).map(r=>`<li>${escHtml(r)}</li>`).join('') || '<li>暂无数据</li>';
+
+  // Gate summary
+  const g1 = gates.market_concentration || {};
+  const g2 = gates.entry_barrier || {};
+  const g3 = gates.price_fit || {};
+  const g4 = gates.review_pain_points || {};
+  const gateHTML = [
+    { label:'门1 市场分散', passed:g1.passed, detail:g1.detail },
+    { label:'门2 可切入链接', passed:g2.passed, detail:g2.detail },
+    { label:'门3 价格适配', passed:g3.passed, detail:g3.detail },
+    { label:'门4 痛点可改', passed:g4.passed, detail:g4.detail },
+  ].map(g=>`<div style="display:flex;align-items:flex-start;gap:8px;padding:8px 12px;background:var(--surface2);border-radius:8px;">
+    <span style="font-size:16px;flex-shrink:0">${g.passed?'✅':'❌'}</span>
+    <div><div style="font-size:12px;font-weight:600">${g.label}</div><div style="font-size:11px;color:var(--muted)">${escHtml(g.detail||'')}</div></div>
+  </div>`).join('');
+
+  document.getElementById('modal-content').innerHTML = `
+    ${imgSrc ? `<img class="modal-img" src="${escHtml(imgSrc)}" alt="" onerror="this.style.display='none'">` : ''}
+    <div class="modal-title">${escHtml(p.title||'')}</div>
+    <div class="modal-meta">
+      ${p.asin ? `<div class="meta-chip"><a href="https://www.amazon.com/dp/${p.asin}" target="_blank">🛒 亚马逊链接 ${p.asin}</a></div>` : ''}
+      <div class="meta-chip">💰 $${(p.price||0).toFixed(2)}</div>
+      <div class="meta-chip">⭐ ${p.rating||'—'}</div>
+      <div class="meta-chip">💬 ${fmt(p.review_count)} 评论</div>
+      ${p.monthly_sales_est ? `<div class="meta-chip monthly-sales">📦 月销约 ${fmt(p.monthly_sales_est)} 件</div>` : ''}
+      <div class="meta-chip">🏆 综合评分 ${p.total_score}/100</div>
+    </div>
+
+    <div><div class="section-title">四个门结果</div>
+    <div style="display:flex;flex-direction:column;gap:8px">${gateHTML}</div></div>
+
+    <div><div class="section-title">评分卡</div>
+    <div class="scorecard-grid">${scorecardHTML}</div></div>
+
+    <div><div class="section-title">✅ 切入机会</div>
+    <ul class="list-items">${evHTML}</ul></div>
+
+    <div><div class="section-title">⚠️ 主要风险</div>
+    <ul class="list-items risk">${rkHTML}</ul></div>
+
+    <div><div class="section-title">💡 切入策略</div>
+    <div class="entry-box">${escHtml(p.entry_strategy||'差异化改款切入')}</div></div>
+  `;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal(e) { if (e.target.id === 'modal-overlay') closeModalDirect(); }
+function closeModalDirect() { document.getElementById('modal-overlay').classList.remove('open'); }
+
+// ══════════════════════════════════════════
+// Compare panel
+// ══════════════════════════════════════════
+function renderHourButtons() {
+  const area = document.getElementById('compare-hours');
+  if (!indexData.length) {
+    area.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:8px">暂无历史记录（至少需要2轮数据）</div>';
+    return;
+  }
+  area.innerHTML = indexData.slice(0, 48).map((item, i) => {
+    const label = item.hour_tag || item.report_id || `批次${i+1}`;
+    const display = label.replace('T', ' ') + ':00';
+    return `<button class="hour-btn" data-idx="${i}" onclick="toggleHour(${i},this)">${display}</button>`;
+  }).join('');
+}
+
+async function toggleHour(idx, btn) {
+  if (selectedHours.includes(idx)) {
+    selectedHours = selectedHours.filter(x => x !== idx);
+    btn.classList.remove('selected');
+  } else {
+    if (selectedHours.length >= 4) {
+      alert('最多同时对比4轮数据');
+      return;
+    }
+    selectedHours.push(idx);
+    btn.classList.add('selected');
+  }
+  await renderCompareTable();
+}
+
+async function renderCompareTable() {
+  const area = document.getElementById('compare-table-area');
+  if (selectedHours.length < 1) {
+    area.innerHTML = '<div class="empty"><div class="empty-icon">📋</div><div>请至少选择1轮数据</div></div>';
+    return;
+  }
+
+  area.innerHTML = '<div class="loading"><div class="spinner"></div> 加载对比数据…</div>';
+
+  try {
+    // Load selected snapshots
+    const snapshots = await Promise.all(selectedHours.map(async idx => {
+      const item = indexData[idx];
+      const url = 'data/' + item.file;
+      const data = await loadJSON(url);
+      return { label: (item.hour_tag||'').replace('T',' ')+':00', data };
+    }));
+
+    // Build ASIN union
+    const asinSet = new Set();
+    snapshots.forEach(s => (s.data.top10||[]).forEach(p => asinSet.add(p.asin)));
+    const asins = [...asinSet];
+
+    // Build lookup
+    const lookup = {}; // asin -> {snap_idx -> product}
+    asins.forEach(asin => { lookup[asin] = {}; });
+    snapshots.forEach((s, si) => {
+      (s.data.top10||[]).forEach(p => { lookup[p.asin][si] = p; });
+    });
+
+    // Get a sample product for display
+    const sampleMap = {};
+    asins.forEach(asin => {
+      sampleMap[asin] = Object.values(lookup[asin])[0];
+    });
+
+    const colHeaders = snapshots.map(s => `<th class="hour-col">${escHtml(s.label)}<br><span style="font-size:10px;color:var(--muted)">排名/评分</span></th>`).join('');
+
+    const rows = asins.map(asin => {
+      const sample = sampleMap[asin] || {};
+      const imgSrc = sample.image_url || '';
+      const imgEl = imgSrc
+        ? `<img class="tbl-img" src="${escHtml(imgSrc)}" alt="" onerror="this.outerHTML='<div class=tbl-img-ph>📦</div>'" loading="lazy">`
+        : `<div class="tbl-img-ph">📦</div>`;
+
+      const scores = snapshots.map((s, si) => {
+        const p = lookup[asin][si];
+        if (!p) return `<td class="hour-col" style="color:var(--muted)">—</td>`;
+        return `<td class="hour-col">
+          <div style="font-weight:700">#${p.rank}</div>
+          <div class="hour-score ${p.total_score>=65?'best':''}">${p.total_score}分</div>
+          <div class="tbl-tier ${p.tier}">${TIER_LABEL[p.tier]||p.tier}</div>
+        </td>`;
+      }).join('');
+
+      return `<tr>
+        <td style="padding:10px 14px">${imgEl}</td>
+        <td><div class="tbl-title">${escHtml(sample.title||'')}</div>
+          ${sample.asin ? `<a href="https://www.amazon.com/dp/${sample.asin}" target="_blank" style="font-size:10px;color:var(--accent);text-decoration:none">${sample.asin}</a>` : ''}
+        </td>
+        <td class="tbl-price">$${(sample.price||0).toFixed(0)}</td>
+        <td class="tbl-reviews">${fmt(sample.review_count)}</td>
+        ${scores}
+      </tr>`;
+    }).join('');
+
+    area.innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th style="width:60px">图片</th>
+            <th>产品名称</th>
+            <th>售价</th>
+            <th>评论数</th>
+            ${colHeaders}
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+  } catch(e) {
+    area.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div>加载失败：${e.message}</div></div>`;
+  }
+}
+
+// ══════════════════════════════════════════
+// Utils
+// ══════════════════════════════════════════
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 // Auto-refresh every 5 minutes
-setInterval(() => loadData('data/latest.json').catch(() => {}), 5 * 60 * 1000);
+setInterval(() => init().catch(()=>{}), 5 * 60 * 1000);
+
+// Keyboard close modal
+document.addEventListener('keydown', e => { if (e.key==='Escape') closeModalDirect(); });
 
 init();
 </script>
